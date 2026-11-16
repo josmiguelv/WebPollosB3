@@ -1,5 +1,4 @@
-@import "tailwindcss";
-@import "tw-animate-css";
+/* Estilos propios de Pollos B3. No utiliza Tailwind ni tw-animate-css. */
 :root { font-family: "DM Sans", sans-serif; color: #111111; background: #ffffff; font-synthesis: none; text-rendering: optimizeLegibility; }
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; scroll-padding-top: 96px; }

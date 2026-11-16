@@ -10,6 +10,10 @@ Esta entrega contiene: cabecera y portada editorial con carrusel automático/man
 
 En **desarrollo**, se muestran productos/precios de prueba *expresamente etiquetados como datos de diseño*. No son la carta ni ofertas de Pollos B3. En la compilación de producción, la muestra se oculta y no se publica ningún precio sin origen administrativo. `VITE_B3_ENABLE_DESIGN_PREVIEW=true` solo debe usarse en un entorno cerrado de revisión, nunca en una web pública.
 
+## Corrección de arranque (posterior a v1.0.0)
+
+Se quitaron dos imports CSS heredados (`tailwindcss` y `tw-animate-css`) que no estaban declarados como dependencias y provocaban `ENOENT` en `vite build`. La web usa sus estilos propios en `premium.css`. Servidor de desarrollo y previsualización configurados en el puerto **4321**; no se tocaron animaciones ni integraciones.
+
 ## Instalar y ejecutar
 
 Requiere Node 20.19+ o 22.12+, y npm.
@@ -19,7 +23,7 @@ npm install
 npm run dev
 ```
 
-Abrir http://localhost:3000. Compilación: `npm run check && npm run build`; servir `dist/` como estático en hosting HTTPS con fallback a `index.html`.
+Abrir http://localhost:4321. Compilación: `npm run check && npm run build`; servir `dist/` como estático en hosting HTTPS con fallback a `index.html`.
 
 **Nota de validación en esta entrega:** el entorno donde se preparó la modificación no tenía acceso de red a npm. Se verificó la sintaxis TypeScript/JSX y el parseo CSS de forma independiente; no pudo completarse una instalación ni probarse la app React compilada. No declarar la release probada en runtime hasta ejecutar el flujo anterior en un equipo con npm accesible.
 
