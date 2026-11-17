@@ -50,3 +50,5 @@
 @media(prefers-reduced-motion:reduce){.commercial-pathway,.commercial-featured-card,.commercial-button{transition:none!important}}
 
 .commercial-featured-media{position:absolute;inset:0;display:grid;place-items:center;overflow:hidden}.commercial-featured-media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.75}.commercial-featured-media .commercial-illustration{margin:auto}
+
+.commercial-featured-media .commercial-photo-disclaimer{position:absolute;z-index:2;top:15px;right:15px;color:#fff;background:#161311cc;padding:6px 9px;border-radius:4px;font-weight:800;font-size:9px;letter-spacing:.08em}

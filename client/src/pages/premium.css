@@ -479,3 +479,23 @@
 .header-mobile-popover a{background:transparent;border-bottom:1px solid #eee;padding:16px 0;display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:15px}
 .b3-website main{min-height:50svh}
 @media(max-width:700px){.bottom-nav-modern a:first-child:not([aria-current="page"]){color:#68605b}}
+
+/* Fotos de referencia: solo se muestran cuando no está conectado el catálogo oficial. */
+/* No alterar la animación de las historias, el layoutId FLIP ni el giro en Canvas. */
+.product-photo-wrap{position:relative;width:100%;height:100%;min-height:inherit;overflow:hidden;background:#22130f}
+.product-photo-wrap>.product-art{position:absolute;inset:0}
+.product-photo-wrap>.product-photo{position:absolute;inset:0;z-index:1;width:100%;height:100%;object-fit:cover}
+.photo-reference-pill{position:absolute;z-index:2;left:10px;bottom:10px;max-width:calc(100% - 20px);color:#fff;background:#15100bcc;border:1px solid #ffffff40;border-radius:5px;padding:5px 7px;font-size:9px;line-height:1.35;font-weight:700;letter-spacing:.035em;pointer-events:none}
+.hero-brand-stage--reference .hero-preview-shot{position:absolute;inset:7% 3% 9%;overflow:hidden;border-radius:24px;box-shadow:0 20px 55px #000a;z-index:1;background:#35170f;transform-origin:center center}
+.hero-preview-shot img{width:100%;height:100%;object-fit:cover;display:block}
+.hero-preview-shot:after{content:"";position:absolute;inset:35% 0 0;background:linear-gradient(transparent,#0008);pointer-events:none}
+.hero-preview-shot span{position:absolute;z-index:2;left:14px;right:14px;bottom:15px;color:#fff;text-align:center;letter-spacing:.07em;font-size:9px;font-weight:800;text-shadow:0 1px 3px #000}
+.hero-brand-stage--reference>.hero-brand-image{position:absolute;z-index:3;width:30%;height:30%;left:-2%;bottom:0%;object-fit:contain;mask-image:none;filter:drop-shadow(0 10px 16px #000b)}
+.hero-brand-stage--reference>.stage-halo,.hero-brand-stage--reference>.stage-red-ring{opacity:.18;pointer-events:none}
+.hero-brand-stage--reference>.stage-index{z-index:3}
+@media(max-width:700px){
+  .hero-brand-stage--reference .hero-preview-shot{inset:0 1% 3%;border-radius:14px}
+  .hero-brand-stage--reference>.hero-brand-image{width:30%;height:30%;left:-3%;bottom:-9%}
+  .photo-reference-pill{font-size:7px;line-height:1.3;padding:4px 5px;left:7px;bottom:7px}
+  .hero-preview-shot span{font-size:7px;bottom:9px}
+}

@@ -89,3 +89,7 @@ npm run dev
 ```
 
 **Límite de validación:** la actualización v1.1.0 se verificó con análisis estático/sintáctico en el entorno de creación; la compilación integrada, pruebas en dispositivos y conexión con servicios reales requieren ejecución en un entorno con las dependencias de npm instaladas.
+
+## Fotografías de referencia (revisión v1.1.2)
+
+La vista de prueba incluye seis fotografías de Pexels con licencia de uso comercial, etiquetadas como **referenciales**, para evaluar cómo se ve la gastronomía real dentro del diseño premium. Roky's es únicamente referente visual; no se han incorporado imágenes de su sitio. Se preservaron las animaciones. Consulta `docs/FOTOGRAFIAS_REFERENCIALES.md` para fuentes, autores y criterios de sustitución. La carga de imágenes depende temporalmente del CDN de Pexels y debe validarse en un navegador real.

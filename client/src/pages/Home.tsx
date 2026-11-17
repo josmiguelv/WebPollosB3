@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from 'framer-motion';
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Check, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, CircleHelp, Clock3, Flame, Heart, Instagram, MapPin, Menu, MessageCircle, Minus, Navigation, Plus, RotateCcw, Search, ShoppingBag, Sparkles, Store, Truck, UserRound, UtensilsCrossed, X } from 'lucide-react';
-import { B3Catalog, B3Product, B3Story, designFixtures, editorialStories, loadPublicCatalog, soles } from '@/lib/storefront/catalog';
+import { B3Catalog, B3Product, B3Story, designFixtures, editorialStories, loadPublicCatalog, soles, referenceMedia } from '@/lib/storefront/catalog';
 import { SpinCanvas } from '@/features/menu/SpinCanvas';
 import { SiteLink, navigate, useRoute, pageTitles } from '@/lib/navigation';
 import { AboutPage, AccountPage, CartPage, CheckoutPage, CommercialHero, FeaturedIntro, HelpPage, HomePathways, NotFoundPage, OrdersPage, PromotionsPage } from './CommercialViews';
@@ -71,7 +71,11 @@ function ProductArt({ product, featured = false, isDetail = false }: { product: 
   </div>;
   if (isDetail && product.kind === 'pollo' && product.spinFrames?.length) return <SpinCanvas urls={product.spinFrames} alt={`${product.name}, vista interactiva de giro`}/>;
   if (product.videoUrl && !isDetail) return <VisibleProductVideo url={product.videoUrl} poster={product.imageUrl} label={product.name}/>;
-  if (product.imageUrl) return <img className="product-photo" src={product.imageUrl} alt={product.name} loading={isDetail ? 'eager' : 'lazy'}/>;
+  if (product.imageUrl) return <div className="product-photo-wrap">
+    {art}
+    <img className="product-photo" src={product.imageUrl} alt={product.name} loading={isDetail ? 'eager' : 'lazy'} decoding="async" onError={event => {event.currentTarget.style.display = 'none';}}/>
+    {product.id.startsWith('demo-') && <span className="photo-reference-pill">FOTO REFERENCIAL · NO ES PRODUCTO OFICIAL</span>}
+  </div>;
   return art;
 }
 
@@ -105,13 +109,14 @@ function Intro({ onDone }: { onDone: () => void }) {
     <span className="intro-skip">TOCA PARA CONTINUAR <ArrowRight size={14}/></span>
   </motion.div>;
 }
-function Hero({ onOrder }: { onOrder: () => void }) {
+function Hero({ onOrder, preview }: { onOrder: () => void; preview: boolean }) {
   const [slide, setSlide] = useState(0);
   const pointer = useRef<number | null>(null);
   const reduced = useReducedMotion();
   useEffect(() => { if (reduced) return; const timer = window.setInterval(() => setSlide(s => (s + 1) % heroSlides.length), 5800); return () => clearInterval(timer); }, [reduced]);
   const move = (delta: number) => setSlide(s => (s + delta + heroSlides.length) % heroSlides.length);
   const item = heroSlides[slide];
+  const previewShot = [referenceMedia.brasa, referenceMedia.fuego, referenceMedia.combo][slide];
   return <section className="b3-hero" id="inicio" aria-label="Bienvenidos a Pollos B3" onTouchStart={event => { pointer.current = event.touches[0].clientX; }} onTouchEnd={event => { if (pointer.current === null) return; const diff = event.changedTouches[0].clientX - pointer.current; if (Math.abs(diff) > 55) move(diff < 0 ? 1 : -1); pointer.current = null; }}>
     <div className="hero-static-grain" aria-hidden="true"/>
     <div className="hero-inner">
@@ -126,7 +131,8 @@ function Hero({ onOrder }: { onOrder: () => void }) {
         <div className="hero-actions-modern"><SiteLink className="b3-pill b3-pill--red" to="/carta">EXPLORAR LA CARTA <ArrowUpRight size={18}/></SiteLink><button className="b3-pill b3-pill--outline" onClick={onOrder}>¿CÓMO VAS A PEDIR? <ArrowRight size={17}/></button></div>
         <div className="hero-slide-controls"><span className="hero-count">0{slide + 1} <i/> 0{heroSlides.length}</span><div className="hero-pagination" aria-label="Diapositivas">{heroSlides.map((s, idx) => <button key={s.top} type="button" aria-label={`Ver presentación ${idx + 1}`} aria-current={idx === slide ? 'true' : undefined} onClick={() => setSlide(idx)} className={idx === slide ? 'active' : ''}/>)}</div><div className="hero-arrows"><button onClick={() => move(-1)} aria-label="Anterior"><ArrowLeft size={17}/></button><button onClick={() => move(1)} aria-label="Siguiente"><ArrowRight size={17}/></button></div></div>
       </div>
-      <div className="hero-brand-stage" aria-label="Identidad oficial de Pollos B3">
+      <div className={`hero-brand-stage${preview ? ' hero-brand-stage--reference' : ''}`} aria-label="Identidad oficial de Pollos B3">
+        {preview && <AnimatePresence mode="wait" initial={false}><motion.div key={slide} className="hero-preview-shot" initial={reduced ? false : { opacity: 0, scale: 1.06 }} animate={{ opacity: 1, scale: 1 }} exit={reduced ? undefined : { opacity: 0, scale: .97 }} transition={{duration:reduced ? 0 : .55}}><img src={previewShot.url} alt={previewShot.alt} loading="eager" decoding="async" onError={e=>{e.currentTarget.style.display='none';}}/><span>FOTOGRAFÍA REFERENCIAL · NO ES POLLOS B3</span></motion.div></AnimatePresence>}
         <div className="stage-halo stage-halo--outer"/><div className="stage-halo stage-halo--inner"/><div className="stage-red-ring"/>
         <span className="stage-side-text">UN SABOR QUE SE VIVE</span>
         <BrandImage className="hero-brand-image"/>
@@ -169,7 +175,7 @@ function Stories({ stories, onProduct }: { stories: B3Story[]; onProduct: (id: s
     <div className="moments-rail" role="list" aria-label="Historias interactivas">{stories.map((story, idx) => <button role="listitem" className="moment" type="button" onClick={() => setCurrent(idx)} key={story.id}><div className={`moment-ring ${seen.includes(story.id) ? 'is-seen' : ''}`}><div className={`moment-core tone-${story.tone || 'red'}`}>{story.imageUrl ? <img src={story.imageUrl} alt="" loading="lazy"/> : <BrandGlyph label={`0${idx + 1}`}/>}</div></div><span>{story.title}</span></button>)}</div>
     <AnimatePresence>{active && <motion.div className="story-overlay" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} role="dialog" aria-modal="true" aria-label={`Historia: ${active.title}`}>
       <div className={`story-screen tone-${active.tone || 'red'}`}><div className="story-bars">{stories.map((story, i) => <span key={story.id}><b style={{ width: i < current! ? '100%' : i === current ? `${progress * 100}%` : '0%' }}/></span>)}</div>
-        <div className="story-top"><BrandImage/><span>POLLOS B3 · HISTORIAS</span><button onClick={() => { setSeen(old => old.includes(active.id) ? old : [...old, active.id]); setCurrent(null); }} aria-label="Cerrar historias"><X size={23}/></button></div>
+        <div className="story-top"><BrandImage/><span>{active.imageUrl && demo ? 'IMAGEN REFERENCIAL · B3' : 'POLLOS B3 · HISTORIAS'}</span><button onClick={() => { setSeen(old => old.includes(active.id) ? old : [...old, active.id]); setCurrent(null); }} aria-label="Cerrar historias"><X size={23}/></button></div>
         {active.videoUrl ? <video ref={video} className="story-media" src={active.videoUrl} autoPlay muted playsInline loop/> : active.imageUrl ? <img src={active.imageUrl} className="story-media" alt=""/> : <div className="story-typography" aria-hidden="true"><div className="story-typography-ring"/><BrandImage/></div>}
         <div className="story-tap story-tap--left" onClick={() => go(-1)} role="button" tabIndex={0} aria-label="Historia anterior" onKeyDown={e => { if (e.key === 'Enter') go(-1); }}/><div className="story-tap story-tap--right" onClick={() => go(1)} role="button" tabIndex={0} aria-label="Siguiente historia" onKeyDown={e => { if (e.key === 'Enter') go(1); }}/>
         <div className="story-bottom"><p>UNA HISTORIA B3</p><h3>{active.title}</h3><span>{active.subtitle}</span><button className="b3-pill b3-pill--white" onClick={() => { const id = active.productId; setCurrent(null); if (id) onProduct(id); else navigate('/carta'); }}>{active.productId ? 'VER PRODUCTO' : 'EXPLORAR LA CARTA'} <ArrowUpRight size={16}/></button></div>
@@ -199,7 +205,7 @@ function ProductDetail({ product, close, add }: { product: B3Product; close: () 
   return <motion.div className="detail-backdrop" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onMouseDown={close} role="presentation">
     <motion.section className="detail-sheet" role="dialog" aria-modal="true" aria-labelledby="detail-name" initial={{ y: 45, opacity: .8 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 40, opacity: 0 }} transition={{ duration: .48, ease: [.2, .75, .2, 1] }} onMouseDown={event => event.stopPropagation()}>
       <button className="floating-close" onClick={close} aria-label="Cerrar ficha"><X size={21}/></button>
-      <motion.div layoutId={`b3-image-${product.id}`} transition={{ type: 'tween', duration: .48 }} className="detail-media"><ProductArt product={product} isDetail/>{!product.imageUrl && <span className="detail-photo-note">ILUSTRACIÓN CONCEPTUAL · FOTO OFICIAL POR CONECTAR</span>}</motion.div>
+      <motion.div layoutId={`b3-image-${product.id}`} transition={{ type: 'tween', duration: .48 }} className="detail-media"><ProductArt product={product} isDetail/>{product.id.startsWith('demo-') ? <span className="detail-photo-note">FOTOGRAFÍA REFERENCIAL · NO ES PRODUCTO OFICIAL</span> : !product.imageUrl && <span className="detail-photo-note">ILUSTRACIÓN CONCEPTUAL · FOTO OFICIAL POR CONECTAR</span>}</motion.div>
       <div className="detail-body"><p className="section-index">ELIGE A TU MANERA · POLLOS B3</p><h2 id="detail-name">{product.name}</h2><p className="detail-description">{product.description}</p>
         <fieldset className="option-set"><legend>Selecciona tu presentación <span>01</span></legend><div className="option-choices">{product.variants.map(x => <button type="button" disabled={x.available === false} className={`option-pill ${variant === x.id ? 'is-picked' : ''}`} key={x.id} onClick={() => { setVariant(x.id); navigator.vibrate?.(8); }}><b>{x.label}</b><span>{soles(x.price)}</span></button>)}</div></fieldset>
         {!!product.sauces?.length && <fieldset className="option-set"><legend>Elige tus cremas <span>HASTA {product.sauceLimit ?? 3}</span></legend><div className="chip-choices">{product.sauces.filter(x => x.available !== false).map(x => <button type="button" className={`chip ${creams.includes(x.id) ? 'is-picked' : ''}`} key={x.id} onClick={() => onCream(x.id)}>{creams.includes(x.id) ? <Check size={15}/> : <Plus size={15}/>} {x.label}{x.price > 0 && ` +${soles(x.price)}`}</button>)}</div>{warn && <p className="option-warning" role="alert">{warn}</p>}</fieldset>}
@@ -356,7 +362,7 @@ export default function Home() {
     {demo&&<div className="design-preview-banner"><Sparkles size={15}/> VISTA DE DISEÑO — CATÁLOGO Y PRECIOS DE MUESTRA. SIN PEDIDOS REALES.</div>}
     <AnimatePresence mode="wait" initial={false}><motion.main id="main-content" key={route} initial={reducedAnimations ? false : {opacity:0,y:10}} animate={{opacity:1,y:0}} exit={reducedAnimations ? undefined : {opacity:0,y:-6}} transition={{duration:reducedAnimations?0:.2}}>
       {route==='/' && <>
-        <Hero onOrder={()=>setLocationOpen(true)}/>
+        <Hero onOrder={()=>setLocationOpen(true)} preview={demo}/>
         <div className="marquee-band" aria-label="Experiencia Pollos B3"><div>EL SABOR NOS REÚNE <span>✳</span> HAZLO A TU MANERA <span>✳</span> EL SABOR NOS REÚNE <span>✳</span> HAZLO A TU MANERA <span>✳</span></div></div>
         <Stories stories={(data?.stories.length?data.stories:editorialStories)} onProduct={openById}/>
         <FeaturedIntro products={data?.products||[]} onOpen={openById}/>
