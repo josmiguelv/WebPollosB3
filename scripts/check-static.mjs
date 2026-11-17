@@ -26,3 +26,20 @@ for(const text of [home,html]) {
 }
 assert.ok(!fs.existsSync(new URL('../client/public/__manus__/', import.meta.url)));
 console.log('Verificaciones estáticas superadas. No sustituyen pruebas de compilación/runtime.');
+
+const router = get('../client/src/lib/navigation.tsx');
+const commercial = get('../client/src/pages/CommercialViews.tsx');
+const commercialCSS = get('../client/src/pages/commercial.css');
+for (const path of ['/carta','/combos','/locales','/carrito','/checkout','/pedidos','/mi-cuenta','/ayuda']) {
+  assert.ok(router.includes(`'${path}'`), `Falta ruta ${path}`);
+}
+for (const component of ['CartPage','CheckoutPage','OrdersPage','AccountPage','FeaturedIntro','HomePathways']) {
+  assert.ok(commercial.includes(`function ${component}`),`Falta vista ${component}`);
+}
+assert.ok(home.includes('useRoute()'),'Falta integración del router en la web');
+assert.ok(home.includes('CartPage') && home.includes('ComboBuilder') && home.includes('MenuSection'),'Falta navegado de páginas reales');
+assert.ok(commercialCSS.includes('@media(max-width:760px)'), 'Faltan estilos para móvil');
+assert.ok(!home.includes('href="#carta"'),'No dejar enlace antiguo hacia carta en Home');
+assert.ok(!get('../client/src/index.css').includes('@import "tailwindcss"'),'No se requiere tailwind');
+for (const value of [router,commercial,commercialCSS]) assert.doesNotMatch(value,/\bNFC\b|\bQR\b|wordpress|manus/i,'Aparecen referencias prohibidas');
+console.log('Verificación comercial multipágina y restricciones: PASS.');

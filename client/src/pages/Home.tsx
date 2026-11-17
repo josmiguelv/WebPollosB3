@@ -4,11 +4,13 @@ import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from 'framer-m
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Check, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, CircleHelp, Clock3, Flame, Heart, Instagram, MapPin, Menu, MessageCircle, Minus, Navigation, Plus, RotateCcw, Search, ShoppingBag, Sparkles, Store, Truck, UserRound, UtensilsCrossed, X } from 'lucide-react';
 import { B3Catalog, B3Product, B3Story, designFixtures, editorialStories, loadPublicCatalog, soles } from '@/lib/storefront/catalog';
 import { SpinCanvas } from '@/features/menu/SpinCanvas';
+import { SiteLink, navigate, useRoute, pageTitles } from '@/lib/navigation';
+import { AboutPage, AccountPage, CartPage, CheckoutPage, CommercialHero, FeaturedIntro, HelpPage, HomePathways, NotFoundPage, OrdersPage, PromotionsPage } from './CommercialViews';
 import './premium.css';
 
 type Notice = { title: string; text: string } | null;
-type CartItem = { key: string; productId: string; name: string; variant: string; unit: number; extras: string[]; qty: number; isCombo?: boolean };
-type Delivery = { mode: 'delivery' | 'pickup'; address: string; storeId: string; coords?: { latitude: number; longitude: number } };
+export type CartItem = { key: string; productId: string; name: string; variant: string; unit: number; extras: string[]; qty: number; isCombo?: boolean };
+export type Delivery = { mode: 'delivery' | 'pickup'; address: string; storeId: string; coords?: { latitude: number; longitude: number } };
 const reduceMotion = () => typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const imgLogo = '/brand/pollos-b3-logo.png';
 const labelFor = (s: string) => s.toUpperCase();
@@ -120,7 +122,7 @@ function Hero({ onOrder }: { onOrder: () => void }) {
             <p>Una experiencia con identidad propia, hecha para elegir a tu manera.</p>
           </motion.div>
         </AnimatePresence>
-        <div className="hero-actions-modern"><a className="b3-pill b3-pill--red" href="#carta">EXPLORAR LA CARTA <ArrowUpRight size={18}/></a><button className="b3-pill b3-pill--outline" onClick={onOrder}>¿CÓMO VAS A PEDIR? <ArrowRight size={17}/></button></div>
+        <div className="hero-actions-modern"><SiteLink className="b3-pill b3-pill--red" to="/carta">EXPLORAR LA CARTA <ArrowUpRight size={18}/></SiteLink><button className="b3-pill b3-pill--outline" onClick={onOrder}>¿CÓMO VAS A PEDIR? <ArrowRight size={17}/></button></div>
         <div className="hero-slide-controls"><span className="hero-count">0{slide + 1} <i/> 0{heroSlides.length}</span><div className="hero-pagination" aria-label="Diapositivas">{heroSlides.map((s, idx) => <button key={s.top} type="button" aria-label={`Ver presentación ${idx + 1}`} aria-current={idx === slide ? 'true' : undefined} onClick={() => setSlide(idx)} className={idx === slide ? 'active' : ''}/>)}</div><div className="hero-arrows"><button onClick={() => move(-1)} aria-label="Anterior"><ArrowLeft size={17}/></button><button onClick={() => move(1)} aria-label="Siguiente"><ArrowRight size={17}/></button></div></div>
       </div>
       <div className="hero-brand-stage" aria-label="Identidad oficial de Pollos B3">
@@ -169,7 +171,7 @@ function Stories({ stories, onProduct }: { stories: B3Story[]; onProduct: (id: s
         <div className="story-top"><BrandImage/><span>POLLOS B3 · HISTORIAS</span><button onClick={() => { setSeen(old => old.includes(active.id) ? old : [...old, active.id]); setCurrent(null); }} aria-label="Cerrar historias"><X size={23}/></button></div>
         {active.videoUrl ? <video ref={video} className="story-media" src={active.videoUrl} autoPlay muted playsInline loop/> : active.imageUrl ? <img src={active.imageUrl} className="story-media" alt=""/> : <div className="story-typography" aria-hidden="true"><div className="story-typography-ring"/><BrandImage/></div>}
         <div className="story-tap story-tap--left" onClick={() => go(-1)} role="button" tabIndex={0} aria-label="Historia anterior" onKeyDown={e => { if (e.key === 'Enter') go(-1); }}/><div className="story-tap story-tap--right" onClick={() => go(1)} role="button" tabIndex={0} aria-label="Siguiente historia" onKeyDown={e => { if (e.key === 'Enter') go(1); }}/>
-        <div className="story-bottom"><p>UNA HISTORIA B3</p><h3>{active.title}</h3><span>{active.subtitle}</span><button className="b3-pill b3-pill--white" onClick={() => { const id = active.productId; setCurrent(null); if (id) onProduct(id); else document.querySelector('#carta')?.scrollIntoView({ behavior: reduceMotion() ? 'auto' : 'smooth' }); }}>{active.productId ? 'VER PRODUCTO' : 'EXPLORAR LA CARTA'} <ArrowUpRight size={16}/></button></div>
+        <div className="story-bottom"><p>UNA HISTORIA B3</p><h3>{active.title}</h3><span>{active.subtitle}</span><button className="b3-pill b3-pill--white" onClick={() => { const id = active.productId; setCurrent(null); if (id) onProduct(id); else navigate('/carta'); }}>{active.productId ? 'VER PRODUCTO' : 'EXPLORAR LA CARTA'} <ArrowUpRight size={16}/></button></div>
       </div></motion.div>}</AnimatePresence>
   </section>;
 }
@@ -278,7 +280,7 @@ function LocationPicker({ data, close, set }: { data: B3Catalog | null; close: (
 
 function CartDrawer({ cart, total, setQty, close, openDelivery }: { cart: CartItem[]; total: number; setQty: (id:string,q:number)=>void; close: ()=>void; openDelivery: ()=>void }) {
   useBodyLock(true);
-  return <div className="drawer-backdrop" role="presentation" onMouseDown={close}><motion.aside className="cart-drawer" role="dialog" aria-modal="true" aria-labelledby="cart-title" initial={{ x:'100%' }} animate={{ x:0 }} exit={{ x:'100%' }} transition={{ type:'tween', duration:.35 }} onMouseDown={e=>e.stopPropagation()}><div className="drawer-heading"><div><p className="section-index">TU ELECCIÓN</p><h2 id="cart-title">Tu pedido<span>.</span></h2></div><button className="round-control" onClick={close} aria-label="Cerrar carrito"><X size={22}/></button></div><div className="cart-items">{cart.length ? cart.map(item=><div className="cart-entry" key={item.key}><div className="cart-entry-image"><BrandGlyph/></div><div className="cart-entry-description"><b>{item.name}</b><span>{item.variant}</span>{!!item.extras.length&&<small>{item.extras.join(' · ')}</small>}<div className="cart-entry-qty"><button onClick={()=>setQty(item.key,item.qty-1)} aria-label={`Restar ${item.name}`}><Minus size={14}/></button><b>{item.qty}</b><button onClick={()=>setQty(item.key,item.qty+1)} aria-label={`Sumar ${item.name}`}><Plus size={14}/></button></div></div><strong>{soles(item.qty*item.unit)}</strong></div>) : <div className="cart-empty"><ShoppingBag size={38} strokeWidth={1}/><h3>Tu próximo antojo empieza aquí.</h3><p>Explora la carta para elegir tus favoritos.</p><button className="b3-pill b3-pill--dark" onClick={()=>{close();document.querySelector('#carta')?.scrollIntoView({behavior:'smooth'});}}>VER LA CARTA <ArrowRight size={17}/></button></div>}</div><div className="drawer-foot"><div className="cart-total"><span>Subtotal</span><strong>{soles(total)}</strong></div><p>El costo de delivery y la disponibilidad se validarán antes de confirmar la compra.</p><button className="b3-pill b3-pill--red cart-checkout" disabled={!cart.length} onClick={()=>{close();openDelivery();}}>CONTINUAR MI PEDIDO <ArrowRight size={17}/></button></div></motion.aside></div>;
+  return <div className="drawer-backdrop" role="presentation" onMouseDown={close}><motion.aside className="cart-drawer" role="dialog" aria-modal="true" aria-labelledby="cart-title" initial={{ x:'100%' }} animate={{ x:0 }} exit={{ x:'100%' }} transition={{ type:'tween', duration:.35 }} onMouseDown={e=>e.stopPropagation()}><div className="drawer-heading"><div><p className="section-index">TU ELECCIÓN</p><h2 id="cart-title">Tu pedido<span>.</span></h2></div><button className="round-control" onClick={close} aria-label="Cerrar carrito"><X size={22}/></button></div><div className="cart-items">{cart.length ? cart.map(item=><div className="cart-entry" key={item.key}><div className="cart-entry-image"><BrandGlyph/></div><div className="cart-entry-description"><b>{item.name}</b><span>{item.variant}</span>{!!item.extras.length&&<small>{item.extras.join(' · ')}</small>}<div className="cart-entry-qty"><button onClick={()=>setQty(item.key,item.qty-1)} aria-label={`Restar ${item.name}`}><Minus size={14}/></button><b>{item.qty}</b><button onClick={()=>setQty(item.key,item.qty+1)} aria-label={`Sumar ${item.name}`}><Plus size={14}/></button></div></div><strong>{soles(item.qty*item.unit)}</strong></div>) : <div className="cart-empty"><ShoppingBag size={38} strokeWidth={1}/><h3>Tu próximo antojo empieza aquí.</h3><p>Explora la carta para elegir tus favoritos.</p><button className="b3-pill b3-pill--dark" onClick={()=>{close();navigate('/carta');}}>VER LA CARTA <ArrowRight size={17}/></button></div>}</div><div className="drawer-foot"><div className="cart-total"><span>Subtotal</span><strong>{soles(total)}</strong></div><p>El costo de delivery y la disponibilidad se validarán antes de confirmar la compra.</p><button className="b3-pill b3-pill--red cart-checkout" disabled={!cart.length} onClick={()=>{close();openDelivery();}}>CONTINUAR MI PEDIDO <ArrowRight size={17}/></button></div></motion.aside></div>;
 }
 
 function TuVersoChat({ open, setOpen }: { open:boolean; setOpen:(v:boolean)=>void }) {
@@ -294,13 +296,15 @@ function Locations({ data, openDelivery }: { data: B3Catalog | null; openDeliver
 function NoticeDialog({ notice, close }: { notice: {title:string;text:string}; close:()=>void }) { useBodyLock(true); return <div className="b3-overlay" role="presentation" onMouseDown={close}><section role="dialog" aria-modal="true" aria-labelledby="notice-title" className="notice-modal" onMouseDown={e=>e.stopPropagation()}><button className="floating-close" onClick={close} aria-label="Cerrar"><X size={20}/></button><span className="notice-mark"><CheckCircle2 size={28}/></span><p className="section-index">INFORMACIÓN IMPORTANTE</p><h2 id="notice-title">{notice.title}</h2><p>{notice.text}</p><button className="b3-pill b3-pill--dark" onClick={close}>ENTENDIDO <ArrowRight size={16}/></button></section></div>; }
 
 function Footer({ openChat, notice }: { openChat:()=>void; notice:(title:string,text:string)=>void }) {
-  return <footer className="footer-modern"><div className="footer-top-modern"><div><BrandImage className="footer-logo"/><p>La pollería más viral de Santa Anita.</p><span>SANTA ANITA · LIMA, PERÚ</span></div><div><b>EXPLORA</b><a href="#inicio">Inicio</a><a href="#carta">Carta</a><a href="#combos">Combos</a><a href="#locales">Locales</a></div><div><b>CONVERSEMOS</b><button onClick={openChat}>Chat web <ArrowUpRight size={14}/></button>{([['Instagram',import.meta.env.VITE_B3_INSTAGRAM_URL],['TikTok',import.meta.env.VITE_B3_TIKTOK_URL],['Facebook',import.meta.env.VITE_B3_FACEBOOK_URL]] as Array<[string,string|undefined]>).filter(([,u]) => { try {return !!u && new URL(u).protocol === 'https:';}catch{return false;} }).map(([name,url]) => <a key={name} href={url} target="_blank" rel="noopener noreferrer">{name} <ArrowUpRight size={14}/></a>)}</div><div className="footer-big-b3">B3<span>®</span></div></div><div className="footer-bottom-modern"><span>© {new Date().getFullYear()} POLLOS B3</span><span>EXPERIENCIA DIGITAL POR INTEGRA B2G</span><button onClick={()=>notice('Información legal','Las políticas, términos y el Libro de Reclamaciones deben vincularse a sus documentos oficiales antes del lanzamiento.')}>PRIVACIDAD · TÉRMINOS · LIBRO DE RECLAMACIONES</button></div></footer>;
+  return <footer className="footer-modern"><div className="footer-top-modern"><div><BrandImage className="footer-logo"/><p>La pollería más viral de Santa Anita.</p><span>SANTA ANITA · LIMA, PERÚ</span></div><div><b>EXPLORA</b><SiteLink to="/">Inicio</SiteLink><SiteLink to="/carta">Carta</SiteLink><SiteLink to="/combos">Combos</SiteLink><SiteLink to="/locales">Locales</SiteLink></div><div><b>CONVERSEMOS</b><button onClick={openChat}>Chat web <ArrowUpRight size={14}/></button>{([['Instagram',import.meta.env.VITE_B3_INSTAGRAM_URL],['TikTok',import.meta.env.VITE_B3_TIKTOK_URL],['Facebook',import.meta.env.VITE_B3_FACEBOOK_URL]] as Array<[string,string|undefined]>).filter(([,u]) => { try {return !!u && new URL(u).protocol === 'https:';}catch{return false;} }).map(([name,url]) => <a key={name} href={url} target="_blank" rel="noopener noreferrer">{name} <ArrowUpRight size={14}/></a>)}</div><div className="footer-big-b3">B3</div></div><div className="footer-bottom-modern"><span>© {new Date().getFullYear()} POLLOS B3</span><span>EXPERIENCIA DIGITAL POR INTEGRA B2G</span><button onClick={()=>notice('Información legal','Las políticas, términos y el Libro de Reclamaciones deben vincularse a sus documentos oficiales antes del lanzamiento.')}>PRIVACIDAD · TÉRMINOS · LIBRO DE RECLAMACIONES</button></div></footer>;
 }
 
 export default function Home() {
   const { data, demo, error } = usePublicStore();
+  const route = useRoute();
+  const reducedAnimations = useReducedMotion();
   const { cart, add, setQty, total, count } = usePersistentCart();
-  const [intro, setIntro] = useState(() => { try { return !reduceMotion() && !sessionStorage.getItem('b3-intro-seen'); } catch { return !reduceMotion(); } });
+  const [intro, setIntro] = useState(() => { try { return window.location.pathname === '/' && !reduceMotion() && !sessionStorage.getItem('b3-intro-seen'); } catch { return !reduceMotion(); } });
   const [openProduct, setOpenProduct] = useState<B3Product | null>(null);
   const [cartOpen, setCartOpen] = useState(false);
   const [locationOpen, setLocationOpen] = useState(false);
@@ -320,42 +324,68 @@ export default function Home() {
     if (!target) return;
     const a = source?.getBoundingClientRect() || {left:innerWidth/2,top:innerHeight/2,width:0,height:0};
     const b = target.getBoundingClientRect();
-    const circle = document.createElement('div'); circle.className = 'cart-flying-dot'; circle.textContent='B3'; document.body.appendChild(circle);
+    const circle = document.createElement('div'); circle.className = 'cart-flying-dot';
+    const image = data?.products.find(p => p.id === productId)?.imageUrl;
+    if (image) { circle.style.backgroundImage = `url("${image.replace(/["\\]/g, '')}")`; circle.style.backgroundSize = 'cover'; circle.style.backgroundPosition = 'center'; }
+    else circle.textContent='B3';
+    document.body.appendChild(circle);
     const sx=a.left+a.width/2-21, sy=a.top+a.height/2-21, ex=b.left+b.width/2-21, ey=b.top+b.height/2-21;
     const animation = circle.animate([{ transform:`translate(${sx}px,${sy}px) scale(1)`,opacity:1 },{transform:`translate(${(sx+ex)/2}px,${Math.min(sy,ey)-110}px) scale(.72)`,opacity:1,offset:.55},{transform:`translate(${ex}px,${ey}px) scale(.15)`,opacity:.6}],{duration:680,easing:'cubic-bezier(.21,.68,.16,1)',fill:'forwards'});
     animation.onfinish=()=>circle.remove(); animation.oncancel=()=>circle.remove();
   };
   const addToCart = (item: CartItem, id: string) => { add(item); flyToCart(id); setCartBounce(true); setToast('Agregado a tu pedido'); if(toastTimer.current)clearTimeout(toastTimer.current); toastTimer.current=setTimeout(()=>{setToast('');setCartBounce(false);},2300); };
   const notify = (title:string,text:string) => setNotice({title,text});
-  const goTo = (hash:string) => { setMobileMenu(false);document.querySelector(hash)?.scrollIntoView({behavior: reduceMotion()?'auto':'smooth'}); };
-  const openById = (id: string) => { const product=data?.products.find(p=>p.id===id); if(product) setOpenProduct(product); else goTo('#carta'); };
+  const onNavigate = () => { setMobileMenu(false); setCartOpen(false); };
+  useEffect(() => { document.title = `${route === '/404' ? 'No encontrada' : pageTitles[route]} | Pollos B3 · Santa Anita`; }, [route]);
+  const openById = (id: string) => { const product=data?.products.find(p=>p.id===id); if(product) setOpenProduct(product); else navigate('/carta'); };
   const openCart = () => setCartOpen(true);
   useEffect(() => { if(!toastTimer.current)return;return()=>{if(toastTimer.current)clearTimeout(toastTimer.current);}; },[]);
   return <LayoutGroup id="b3-shared-products"><div className="b3-website">
-    <AnimatePresence>{intro&&<Intro onDone={doneIntro}/>}</AnimatePresence>
+    <AnimatePresence>{intro&&route==='/'&&<Intro onDone={doneIntro}/>}</AnimatePresence>
     <div className="microstrip"><span>POLLOS B3 · SANTA ANITA</span><span>LA POLLERÍA MÁS VIRAL DE SANTA ANITA <Flame size={13}/></span></div>
-    <header className="b3-header"><a href="#inicio" aria-label="Pollos B3, inicio"><BrandImage className="header-brand"/></a><nav className="header-navigation" aria-label="Navegación principal"><a href="#inicio">Inicio</a><a href="#momentos">Experiencias</a><a href="#carta">La carta</a><a href="#combos">Arma tu combo</a><a href="#locales">Locales</a></nav><div className="header-utilities"><button className="header-address" onClick={()=>setLocationOpen(true)}><MapPin size={17}/><span><small>{delivery.mode==='delivery'?'ENVIAR A':'RECOJO EN'}</small>{delivery.mode==='delivery'?(delivery.address||'Elige tu ubicación'):(data?.stores.find(s=>s.id===delivery.storeId)?.name||'Seleccionar local')}</span><ChevronDown size={15}/></button><button className="header-cart" onClick={openCart} aria-label={`Ver pedido, ${count} productos`}><ShoppingBag size={21}/><span>{count}</span></button><button className="header-menu" onClick={()=>setMobileMenu(s=>!s)} aria-label="Abrir menú"><Menu size={24}/></button></div></header>
-    {mobileMenu&&<div className="header-mobile-popover">{[['Inicio','#inicio'],['Experiencias','#momentos'],['La carta','#carta'],['Arma tu combo','#combos'],['Locales','#locales']].map(([title,hash])=><button key={hash} onClick={()=>goTo(hash)}>{title} <ArrowUpRight size={17}/></button>)}<button onClick={()=>{setMobileMenu(false);setLocationOpen(true);}}>Elegir modalidad <MapPin size={17}/></button></div>}
+    <header className="b3-header"><SiteLink to="/" onClick={onNavigate} aria-label="Pollos B3, inicio"><BrandImage className="header-brand"/></SiteLink>
+      <nav className="header-navigation" aria-label="Navegación principal">
+        {([['/','Inicio'],['/carta','La carta'],['/combos','Arma tu combo'],['/promociones','Promociones'],['/locales','Locales'],['/nosotros','Nosotros']] as const).map(([href,label]) => <SiteLink key={href} to={href} onClick={onNavigate} aria-current={route===href?'page':undefined}>{label}</SiteLink>)}
+      </nav>
+      <div className="header-utilities"><button className="header-address" onClick={()=>setLocationOpen(true)}><MapPin size={17}/><span><small>{delivery.mode==='delivery'?'ENVIAR A':'RECOJO EN'}</small>{delivery.mode==='delivery'?(delivery.address||'Elige tu ubicación'):(data?.stores.find(s=>s.id===delivery.storeId)?.name||'Seleccionar local')}</span><ChevronDown size={15}/></button>
+        <button className="header-cart" onClick={openCart} aria-label={`Ver carrito, ${count} productos`}><ShoppingBag size={21}/><span>{count}</span></button>
+        <button className="header-menu" onClick={()=>setMobileMenu(s=>!s)} aria-label={mobileMenu?'Cerrar menú':'Abrir menú'} aria-expanded={mobileMenu}><Menu size={24}/></button>
+      </div></header>
+    {mobileMenu&&<nav className="header-mobile-popover" aria-label="Menú adicional">{([['/','Inicio'],['/carta','La carta'],['/combos','Arma tu combo'],['/promociones','Promociones'],['/locales','Locales'],['/pedidos','Pedidos'],['/mi-cuenta','Mi cuenta'],['/nosotros','Nosotros'],['/ayuda','Ayuda']] as const).map(([href,label])=><SiteLink key={href} to={href} onClick={onNavigate}>{label} <ArrowUpRight size={17}/></SiteLink>)}<button onClick={()=>{setMobileMenu(false);setLocationOpen(true);}}>Elegir modalidad <MapPin size={17}/></button></nav>}
     {demo&&<div className="design-preview-banner"><Sparkles size={15}/> VISTA DE DISEÑO — CATÁLOGO Y PRECIOS DE MUESTRA. SIN PEDIDOS REALES.</div>}
-    <main>
-      <Hero onOrder={()=>setLocationOpen(true)}/>
-      <div className="marquee-band" aria-label="Experiencia Pollos B3"><div>EL SABOR NOS REÚNE <span>✳</span> HAZLO A TU MANERA <span>✳</span> EL SABOR NOS REÚNE <span>✳</span> HAZLO A TU MANERA <span>✳</span></div></div>
-      <Stories stories={(data?.stories.length?data.stories:editorialStories)} onProduct={openById}/>
-      <MenuSection data={data} demo={demo} error={error} open={setOpenProduct} query={query} setQuery={setQuery}/>
-      <div className="midpoint-banner"><span>NO ES SOLO ELEGIR.</span><strong>ES VIVIR LA EXPERIENCIA.</strong><BrandGlyph label="B3"/></div>
-      <Recommender products={data?.products || []} open={setOpenProduct}/>
-      <ComboBuilder data={data} add={addToCart}/>
-      <Locations data={data} openDelivery={()=>setLocationOpen(true)}/>
-      <section className="support-modern layout-gutter" id="atencion"><div className="support-orbital"><MessageCircle size={88} strokeWidth={.7}/></div><div><p className="section-index section-index--light">06 / ESTAMOS AQUÍ PARA TI</p><h2>Hablemos.<br/><i>Sin salir de aquí.</i></h2><p>Un espacio de atención integrado a la web de Pollos B3, preparado para el canal WEB de TU VERSO.</p><button className="b3-pill b3-pill--white" onClick={()=>setChatOpen(true)}>ABRIR ATENCIÓN WEB <ArrowUpRight size={18}/></button></div><span className="support-side-label">TU VERSO · BY INTEGRA B2G</span></section>
-    </main>
+    <AnimatePresence mode="wait" initial={false}><motion.main id="main-content" key={route} initial={reducedAnimations ? false : {opacity:0,y:10}} animate={{opacity:1,y:0}} exit={reducedAnimations ? undefined : {opacity:0,y:-6}} transition={{duration:reducedAnimations?0:.2}}>
+      {route==='/' && <>
+        <Hero onOrder={()=>setLocationOpen(true)}/>
+        <div className="marquee-band" aria-label="Experiencia Pollos B3"><div>EL SABOR NOS REÚNE <span>✳</span> HAZLO A TU MANERA <span>✳</span> EL SABOR NOS REÚNE <span>✳</span> HAZLO A TU MANERA <span>✳</span></div></div>
+        <Stories stories={(data?.stories.length?data.stories:editorialStories)} onProduct={openById}/>
+        <FeaturedIntro products={data?.products||[]} onOpen={openById}/>
+        <div className="midpoint-banner"><span>NO ES SOLO ELEGIR.</span><strong>ES VIVIR LA EXPERIENCIA.</strong><BrandGlyph label="B3"/></div>
+        <Recommender products={data?.products || []} open={setOpenProduct}/>
+        <HomePathways onChat={()=>setChatOpen(true)}/>
+        <section className="support-modern layout-gutter" id="atencion"><div className="support-orbital"><MessageCircle size={88} strokeWidth={.7}/></div><div><p className="section-index section-index--light">TU VERSO / ATENCIÓN</p><h2>Hablemos.<br/><i>Sin salir de aquí.</i></h2><p>Un espacio de atención dentro de Pollos B3, preparado para el canal WEB de TU VERSO.</p><button className="b3-pill b3-pill--white" onClick={()=>setChatOpen(true)}>ABRIR ATENCIÓN WEB <ArrowUpRight size={18}/></button></div><span className="support-side-label">TU VERSO · BY INTEGRA B2G</span></section>
+      </>}
+      {route==='/carta'&& <><CommercialHero eyebrow="CARTA / EXPERIENCIA INTERACTIVA" heading="Elige con ganas." highlight="Disfruta a tu manera." description="Explora, descubre y personaliza cada detalle. La carta premium de Pollos B3 está hecha para disfrutarse desde la primera interacción."><button className="commercial-button commercial-button--light" onClick={()=>setLocationOpen(true)}>DELIVERY O RECOJO <ArrowRight size={17}/></button></CommercialHero><MenuSection data={data} demo={demo} error={error} open={setOpenProduct} query={query} setQuery={setQuery}/></>}
+      {route==='/combos'&& <><CommercialHero eyebrow="EXPERIENCIA / COMBOS" heading="Tu combo." highlight="Tus reglas." description="Una experiencia interactiva de tres pasos para elegir algo a tu medida. Las opciones y descuentos dependen de la carta oficial."/><ComboBuilder data={data} add={addToCart}/></>}
+      {route==='/locales'&& <><CommercialHero eyebrow="SANTA ANITA / LOCALES" heading="Cerca de ti." highlight="A lo B3." description="Selecciona dónde recoger o introduce tu dirección de entrega. La cobertura y disponibilidad se validarán desde administración."><button className="commercial-button commercial-button--light" onClick={()=>setLocationOpen(true)}>ELEGIR MODALIDAD <ArrowRight size={17}/></button></CommercialHero><Locations data={data} openDelivery={()=>setLocationOpen(true)}/></>}
+      {route==='/promociones'&&<PromotionsPage/>}
+      {route==='/carrito'&&<CartPage cart={cart} total={total} setQty={setQty} onCheckout={()=>navigate('/checkout')} demo={demo}/>}
+      {route==='/checkout'&&<CheckoutPage cart={cart} total={total} data={data} delivery={delivery} onChooseLocation={()=>setLocationOpen(true)} demo={demo}/>}
+      {route==='/pedidos'&&<OrdersPage onChat={()=>setChatOpen(true)}/>}
+      {route==='/mi-cuenta'&&<AccountPage onChat={()=>setChatOpen(true)}/>}
+      {route==='/nosotros'&&<AboutPage/>}
+      {route==='/ayuda'&&<HelpPage onChat={()=>setChatOpen(true)}/>}
+      {route==='/404'&&<NotFoundPage/>}
+    </motion.main></AnimatePresence>
     <Footer openChat={()=>setChatOpen(true)} notice={notify}/>
-    <button className={`cart-floating-modern ${count?'has-items':''} ${cartBounce?'is-bouncing':''}`} onClick={openCart} aria-label={`Ver carrito: ${count} productos, ${soles(total)}`}><ShoppingBag size={19}/><span>VER PEDIDO</span><b>{count}</b>{count>0&&<strong>{soles(total)}</strong>}</button>
+    <button className={`cart-floating-modern ${count?'has-items':''} ${cartBounce?'is-bouncing':''}`} onClick={openCart} aria-label={`Ver carrito: ${count} productos, ${soles(total)}`}><ShoppingBag size={19}/><span>VER CARRITO</span><b>{count}</b>{count>0&&<strong>{soles(total)}</strong>}</button>
     <TuVersoChat open={chatOpen} setOpen={setChatOpen}/>
-    <nav className="bottom-nav-modern" aria-label="Navegación móvil"><a href="#inicio"><Flame size={19}/><span>Inicio</span></a><a href="#carta"><UtensilsCrossed size={19}/><span>Carta</span></a><button onClick={openCart}><ShoppingBag size={19}/><span>Pedidos</span></button><button onClick={()=>notify('Mi cuenta','El acceso a perfiles y al historial se habilitará con la autenticación del administrador compartido. Esta versión no registra datos personales.')}><UserRound size={19}/><span>Mi cuenta</span></button></nav>
+    <nav className="bottom-nav-modern" aria-label="Navegación móvil">
+      {([['/','Inicio',Flame],['/carta','Carta',UtensilsCrossed],['/pedidos','Pedidos',ShoppingBag],['/mi-cuenta','Mi cuenta',UserRound]] as const).map(([href,label,Icon])=><SiteLink key={href} to={href} onClick={onNavigate} aria-current={route===href?'page':undefined}><Icon size={19}/><span>{label}</span></SiteLink>)}
+    </nav>
     <AnimatePresence>{openProduct&&<ProductDetail key={openProduct.id} product={openProduct} close={()=>setOpenProduct(null)} add={addToCart}/>}</AnimatePresence>
-    <AnimatePresence>{cartOpen&&<CartDrawer cart={cart} total={total} setQty={setQty} close={()=>setCartOpen(false)} openDelivery={()=>setLocationOpen(true)}/>}</AnimatePresence>
-    {locationOpen&&<LocationPicker data={data} close={()=>setLocationOpen(false)} set={setDelivery}/>} 
-    {notice&&<NoticeDialog notice={notice} close={()=>setNotice(null)}/>} 
+    <AnimatePresence>{cartOpen&&<CartDrawer cart={cart} total={total} setQty={setQty} close={()=>setCartOpen(false)} openDelivery={()=>{setCartOpen(false);navigate('/checkout');}}/>}</AnimatePresence>
+    {locationOpen&&<LocationPicker data={data} close={()=>setLocationOpen(false)} set={setDelivery}/>}
+    {notice&&<NoticeDialog notice={notice} close={()=>setNotice(null)}/>}
     <AnimatePresence>{toast&&<motion.div role="status" className="b3-toast" initial={{opacity:0,y:16}} animate={{opacity:1,y:0}} exit={{opacity:0,y:10}}><CheckCircle2 size={18}/>{toast}</motion.div>}</AnimatePresence>
   </div></LayoutGroup>;
 }

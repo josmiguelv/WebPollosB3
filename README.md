@@ -1,6 +1,30 @@
-# Pollos B3 — Web premium interactiva (v1.0.0, primera entrega visual)
+# Pollos B3 — Web premium interactiva (v2, fase visual)
 
 Web original de **Pollos B3**, diseñada como canal comercial propio para móviles, tablets y escritorio, con identidad oficial (rojo #FE1601 obtenido del archivo de marca, blanco puro, negro, Montserrat y DM Sans). Proyecto React 19 + TypeScript + Vite. No utiliza temas ni constructores de sitios.
+
+## Navegación comercial v1.1.0
+
+Esta versión convierte el prototipo de una sola página en una **web comercial multipágina tipo SPA**, sin recargas completas y sin plantillas WordPress. El carrito, la modalidad de entrega y el widget de atención conservan su estado mientras se navega.
+
+Rutas implementadas:
+
+| Ruta | Función |
+| --- | --- |
+| `/` | Home editorial animado con historias, recomendador y destacados |
+| `/carta` | Carta completa con categorías, buscador, fichas FLIP y canvas si hay recursos |
+| `/combos` | Constructor interactivo de tres pasos |
+| `/promociones` | Página comercial vinculable al contenido real del administrador |
+| `/locales` | Locales y selector de recojo o entrega |
+| `/carrito` | Edición de carrito persistente y resumen |
+| `/checkout` | Flujo visual de modalidad y datos, **sin confirmar pagos ni pedidos** |
+| `/pedidos` | Diseño del futuro seguimiento real desde el backend |
+| `/mi-cuenta` | Diseño de la futura experiencia de cuenta y recompra |
+| `/nosotros` | Presentación institucional sin inventar hechos del negocio |
+| `/ayuda` | Acceso a atención WEB de TU VERSO cuando esté habilitada |
+
+El frontend conserva las animaciones de la v1 visual, incluida intro (1,9 s), historias (4,5 s), transición FLIP, canvas rotatorio condicionado a recursos oficiales, recomendador, efecto de agregado al carrito y constructor de combos. En las rutas dedicadas se mantienen carrito flotante, navegación móvil y widget de chat.
+
+**Advertencia operativa:** una interfaz de checkout NO equivale a una compra real. El botón de confirmar pedido está deshabilitado mientras no exista contrato validado con el administrador Android. Lo mismo aplica a stock, sedes, delivery, pagos, pedidos y TU VERSO WEB. Tampoco se publican descuentos ni sedes ficticias.
 
 ## Entregable y límites
 
@@ -45,6 +69,17 @@ Consultar `docs/INTEGRACION_ADMINISTRADOR_Y_TUVERSO.md` y `.env.example`. No se 
 
 `npm run build` produce `dist/`; incluye el `Dockerfile`/`nginx.conf` opcionales para hosting estático con HTTPS terminado en proxy. Antes de producción se deben completar contratos backend y pruebas de pedidos, stock, pagos y accesos por sede.
 
-## Versión en repositorio
+## URLs limpias en producción
 
-**v1.0.0** corresponde a la primera entrega visual e interactiva. No es una versión productiva: no aceptar pedidos, pagos ni comunicaciones hasta conectar y certificar los servicios compartidos con la app y el canal WEB de TU VERSO.
+`nginx.conf` contiene la regla SPA `try_files $uri $uri/ /index.html;` para abrir directamente `/carta`, `/carrito`, `/checkout`, etc. Cualquier otro hosting debe configurar el mismo fallback de rutas. Los metadatos de cada página y la indexación avanzada necesitarán revisión SEO cuando se confirme el dominio de Pollos B3; no asumir que una SPA sin prerender ofrece todas las ventajas de SEO multipágina.
+
+## Comprobaciones
+
+```bash
+npm run check:static
+npm run check
+npm run build
+npm run dev
+```
+
+**Límite de validación:** la actualización v1.1.0 se verificó con análisis estático/sintáctico en el entorno de creación; la compilación integrada, pruebas en dispositivos y conexión con servicios reales requieren ejecución en un entorno con las dependencias de npm instaladas.

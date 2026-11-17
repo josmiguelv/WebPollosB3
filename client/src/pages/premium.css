@@ -472,3 +472,10 @@
  .b3-header > a:first-child {width:81px;height:58px;border-radius:9px;margin-right:auto;}
  .b3-header .header-brand {width:80px;height:57px;}
 }
+/* Multipage navigation refinements */
+.header-navigation a[aria-current="page"]:after{transform:scaleX(1)}
+.header-navigation a[aria-current="page"]{color:#d11305}
+.bottom-nav-modern a[aria-current="page"]{color:var(--red)!important}
+.header-mobile-popover a{background:transparent;border-bottom:1px solid #eee;padding:16px 0;display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:15px}
+.b3-website main{min-height:50svh}
+@media(max-width:700px){.bottom-nav-modern a:first-child:not([aria-current="page"]){color:#68605b}}
