@@ -49,7 +49,7 @@ console.log('Verificación comercial multipágina y restricciones: PASS.');
 // Carta Express: the giant editorial hero is removed only from /carta.
 assert.ok(home.includes("b3-website--menu"), 'Falta estado exclusivo de carta');
 assert.ok(home.includes('menu-modern--express'), 'Falta estructura compacta de carta');
-assert.doesNotMatch(home, /route==='\\/carta'&&\\s*<><CommercialHero/, 'La carta todavía tiene el hero alto');
+assert.ok(!home.includes('<CommercialHero eyebrow="CARTA / EXPERIENCIA INTERACTIVA"'), 'La carta todavía tiene el hero alto');
 assert.ok(menuCSS.includes('.b3-website--menu .microstrip'), 'Falta ocultar franja en carta');
 assert.ok(menuCSS.includes('.b3-website--menu .menu-toolbar'), 'Falta barra de filtros compacta');
 assert.ok(menuCSS.includes('.b3-website--menu .product-card-modern.is-featured'), 'Falta tarjeta compacta en móvil');
