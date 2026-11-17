@@ -93,3 +93,7 @@ npm run dev
 ## Fotografías de referencia (revisión v1.1.2)
 
 La vista de prueba incluye seis fotografías de Pexels con licencia de uso comercial, etiquetadas como **referenciales**, para evaluar cómo se ve la gastronomía real dentro del diseño premium. Roky's es únicamente referente visual; no se han incorporado imágenes de su sitio. Se preservaron las animaciones. Consulta `docs/FOTOGRAFIAS_REFERENCIALES.md` para fuentes, autores y criterios de sustitución. La carga de imágenes depende temporalmente del CDN de Pexels y debe validarse en un navegador real.
+
+## Carta gastronómica para pollería peruana (v1.1.3)
+
+La ruta `/carta` usa tarjetas con fotografías prioritarias, buscador y categorías sticky, precios expresados en soles, y apertura animada de variantes y cremas. En teléfonos presenta 2 columnas y productos desde el primer pantallazo. No se alteró la portada, Nosotros, Locales ni los demás canales. Todos los nombres y categorías provienen del adaptador del catálogo: no se incluyen nuevos platos ni promociones ficticias. Los ejemplos están marcados como referenciales y no activan órdenes reales.

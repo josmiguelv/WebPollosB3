@@ -8,6 +8,7 @@ import { SiteLink, navigate, useRoute, pageTitles } from '@/lib/navigation';
 import { AboutPage, AccountPage, CartPage, CheckoutPage, CommercialHero, FeaturedIntro, HelpPage, HomePathways, NotFoundPage, OrdersPage, PromotionsPage } from './CommercialViews';
 import './premium.css';
 import './menu-express.css';
+import './menu-gastronomica.css';
 
 type Notice = { title: string; text: string } | null;
 export type CartItem = { key: string; productId: string; name: string; variant: string; unit: number; extras: string[]; qty: number; isCombo?: boolean };
@@ -218,13 +219,78 @@ function ProductDetail({ product, close, add }: { product: B3Product; close: () 
 
 function MenuSection({ data, demo, error, open, query, setQuery }: { data: B3Catalog | null; demo: boolean; error: string; open: (p: B3Product) => void; query: string; setQuery: (s: string) => void }) {
   const [category, setCategory] = useState('all');
-  const items = (data?.products || []).filter(x => (category === 'all' || category === x.categoryId) && `${x.name} ${x.description}`.toLowerCase().includes(query.toLowerCase()));
-  return <section className="menu-modern menu-modern--express layout-gutter" id="carta" aria-labelledby="menu-title">
-    <div className="menu-fast-heading"><div><p className="menu-fast-eyebrow">POLLOS B3 / CARTA INTERACTIVA</p><h1 id="menu-title">La carta<span>.</span></h1></div><p>Encuentra tu favorito, personalízalo y agrégalo a tu pedido.</p></div>
-    <div className="menu-toolbar" role="search"><label className="menu-search"><Search size={19}/><input type="search" value={query} onChange={e => setQuery(e.target.value)} placeholder="Busca tu antojo" aria-label="Buscar productos en la carta"/></label><div className="category-chips" role="group" aria-label="Filtrar por categoría"><button type="button" onClick={() => setCategory('all')} aria-pressed={category === 'all'} className={category === 'all' ? 'selected' : ''}>Todos</button>{(data?.categories || []).map(x => <button type="button" key={x.id} aria-pressed={category === x.id} className={category === x.id ? 'selected' : ''} onClick={() => setCategory(x.id)}>{x.name}</button>)}</div></div>
+  const products = data?.products ?? [];
+  const categories = data?.categories ?? [];
+  const categoryTitle = category === 'all' ? 'Encuentra tu próximo antojo' : (categories.find(item => item.id === category)?.name ?? 'Nuestra carta');
+  const normalizedQuery = query.trim().toLocaleLowerCase('es-PE');
+  const items = products.filter(product => (category === 'all' || product.categoryId === category) && (product.name + ' ' + product.description).toLocaleLowerCase('es-PE').includes(normalizedQuery));
+  const eligiblePrice = (product: B3Product) => {
+    const options = product.variants.filter(variant => variant.available !== false);
+    return options.length ? Math.min(...options.map(variant => variant.price)) : null;
+  };
+  return <section className="gastro-menu layout-gutter" id="carta" aria-labelledby="menu-title">
+    <header className="gastro-menu-heading">
+      <div>
+        <p className="gastro-eyebrow"><Flame size={15} aria-hidden="true"/> POLLOS B3 · CARTA</p>
+        <h1 id="menu-title">A la brasa, <em>a tu manera.</em></h1>
+        <p className="gastro-menu-lead">Explora la carta, elige tu presentación y personaliza tu pedido.</p>
+      </div>
+      <span className="gastro-head-stamp" aria-hidden="true">B3 <small>LA CARTA</small></span>
+    </header>
+
+    <div className="gastro-filter-bar" role="search">
+      <label className="gastro-search"><Search size={19} aria-hidden="true"/>
+        <input type="search" value={query} onChange={event => setQuery(event.target.value)}
+          placeholder="¿Qué se te antoja hoy?" aria-label="Buscar productos en la carta"/>
+        {query && <button type="button" aria-label="Borrar búsqueda" onClick={() => setQuery('')}><X size={17}/></button>}
+      </label>
+      <nav className="gastro-categories" aria-label="Categorías de la carta">
+        <button type="button" className={category === 'all' ? 'is-current' : ''} aria-pressed={category === 'all'} onClick={() => setCategory('all')}>Toda la carta</button>
+        {categories.map(item => <button type="button" key={item.id} className={category === item.id ? 'is-current' : ''} aria-pressed={category === item.id} onClick={() => setCategory(item.id)}>{item.name}</button>)}
+      </nav>
+    </div>
+
+    <div className="gastro-result-heading" aria-live="polite">
+      <h2>{categoryTitle}</h2>
+      <span>{items.length} {items.length === 1 ? 'opción' : 'opciones'}</span>
+    </div>
     {error && <p className="menu-error" role="alert">No se pudo actualizar la carta: {error}</p>}
-    {demo && <p className="demo-disclosure"><CircleHelp size={15}/> Experiencia de diseño: los productos y precios que ves son muestras para probar interacciones. No son la carta oficial ni permiten realizar pedidos.</p>}
-    {items.length ? <div className="product-grid-modern">{items.map((p, idx) => <motion.button layout key={p.id} type="button" className={`product-card-modern ${p.featured ? 'is-featured' : ''}`} onClick={() => open(p)} aria-label={`Ver ${p.name} desde ${soles(p.variants[0].price)}`}><motion.div data-product-id={p.id} className="product-card-media" layoutId={`b3-image-${p.id}`} transition={{ type: 'tween', duration: .48 }}><ProductArt product={p} featured={p.featured}/></motion.div><div className="product-card-info"><div><span className="product-card-numeral">0{idx + 1} / {p.kind === 'pollo' ? 'A LA BRASA' : labelFor(p.categoryId)}</span><h3>{p.name}</h3><p>{p.description}</p><b>DESDE {soles(Math.min(...p.variants.map(v => v.price)))}</b></div><span className="product-card-arrow"><ArrowUpRight size={23}/></span></div></motion.button>)}</div> : <div className="menu-editorial-empty"><div className="empty-art"><BrandGlyph label="B3"/><span className="empty-art-ring"/></div><div><span className="section-index">LA CARTA, A TU RITMO</span><h3>{query ? 'No encontramos coincidencias.' : 'Muy pronto, todo el sabor en un lugar.'}</h3><p>{query ? 'Prueba con otra palabra o vuelve a explorar las categorías.' : 'La carta oficial se mostrará aquí al vincular el administrador que también utiliza la aplicación móvil. Nada de precios ni productos inventados.'}</p>{query && <button className="text-inline-button" onClick={() => { setQuery(''); setCategory('all'); }}>Limpiar búsqueda <ArrowRight size={16}/></button>}</div></div>}
+    {demo && <div className="gastro-demo-disclosure"><CircleHelp size={18} aria-hidden="true"/><span>Vista de diseño: fotos, productos y precios referenciales. No son la carta oficial de Pollos B3 ni permiten hacer pedidos reales.</span></div>}
+
+    {items.length > 0 ? <div className="gastro-product-grid">
+      {items.map((product, index) => {
+        const price = eligiblePrice(product);
+        const categoryLabel = categories.find(item => item.id === product.categoryId)?.name ?? 'Nuestra carta';
+        return <motion.button type="button" layout key={product.id}
+          className="gastro-product-card"
+          onClick={() => open(product)}
+          disabled={!product.available || price === null}
+          aria-label={'Ver opciones de ' + product.name + (price === null ? '' : ', desde ' + soles(price))}>
+          <motion.div className="gastro-product-media" data-product-id={product.id}
+            layoutId={'b3-image-' + product.id} transition={{type:'tween',duration:.48}}>
+            <ProductArt product={product} featured={index === 0}/>
+            <span className="gastro-media-gradient" aria-hidden="true"/>
+            {product.id.startsWith('demo-') && <span className="gastro-media-note">FOTO REFERENCIAL</span>}
+            {!product.available && <span className="gastro-unavailable">NO DISPONIBLE</span>}
+          </motion.div>
+          <div className="gastro-product-content">
+            <span className="gastro-product-category">{categoryLabel}</span>
+            <h3>{product.name}</h3>
+            <p>{product.description}</p>
+            <div className="gastro-product-action">
+              <span><small>{price === null ? 'CONSULTAR' : 'DESDE'}</small><strong>{price === null ? 'No disponible' : soles(price)}</strong></span>
+              <span className="gastro-plus" aria-hidden="true"><Plus size={20} strokeWidth={2}/></span>
+            </div>
+          </div>
+        </motion.button>;
+      })}
+    </div> : <div className="gastro-empty">
+      <span aria-hidden="true">B3</span>
+      <div><h3>{query || category !== 'all' ? 'No encontramos opciones.' : 'La carta estará disponible pronto.'}</h3>
+        <p>{query || category !== 'all' ? 'Prueba con otra búsqueda o explora todas las categorías.' : 'Estamos preparando la conexión con el catálogo real de Pollos B3. No publicamos productos ni precios sin confirmar.'}</p>
+        {(query || category !== 'all') && <button type="button" onClick={() => {setQuery('');setCategory('all');}}>Ver toda la carta <ArrowRight size={17}/></button>}
+      </div>
+    </div>}
   </section>;
 }
 
