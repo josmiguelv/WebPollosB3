@@ -1,0 +1,61 @@
+/* CARTA EXPRESS — scope: /carta only. Other pages retain their editorial headers. */
+.b3-website--menu .microstrip { display:none; }
+.b3-website--menu .b3-header { height:66px; }
+.b3-website--menu .b3-header > a:first-child { width:82px;height:53px;border-radius:9px; }
+.b3-website--menu .b3-header .header-brand { width:80px;height:52px; }
+.b3-website--menu .header-mobile-popover { top:66px; }
+.b3-website--menu .menu-modern--express { padding-top:22px;padding-bottom:100px;background:#fff; }
+.b3-website--menu .menu-fast-heading { display:flex;justify-content:space-between;align-items:end;gap:24px;max-width:1620px;margin:0 auto 14px; }
+.b3-website--menu .menu-fast-eyebrow { margin:0 0 6px;color:#b51f11;font-size:10px;line-height:1.3;letter-spacing:.14em;font-weight:800; }
+.b3-website--menu .menu-fast-heading h1 { margin:0;font:800 clamp(2rem,3.25vw,3.55rem)/1.04 Montserrat,sans-serif;letter-spacing:-.075em; }
+.b3-website--menu .menu-fast-heading h1 span { color:var(--red); }
+.b3-website--menu .menu-fast-heading>p { margin:0 0 3px;max-width:420px;font-size:13px;line-height:1.4;color:#666; }
+.b3-website--menu .menu-toolbar { position:sticky;top:66px;z-index:21;background:#fff;flex-direction:row-reverse;gap:20px;min-height:70px;margin:0 0 14px;padding:10px 0;border-bottom:1px solid #ebebeb; }
+.b3-website--menu .menu-search { flex:0 0 auto; }
+.b3-website--menu .category-chips { min-width:0; }
+.b3-website--menu .category-chips button { padding:10px 16px; }
+.b3-website--menu .demo-disclosure { margin-bottom:12px;padding:8px 12px;font-size:11px; }
+.b3-website--menu .product-grid-modern {gap:12px;}
+.b3-website--menu .product-card-modern {border-color:#eae9e7;border-radius:12px;}
+.b3-website--menu .product-card-modern:focus-visible {outline:3px solid var(--red);outline-offset:3px;}
+@media(max-width:920px) {
+  .b3-website--menu .product-card-modern.is-featured {grid-column:auto;grid-row:auto;}
+  .b3-website--menu .product-card-modern.is-featured .product-card-media {flex:initial;min-height:0;aspect-ratio:1.34;}
+  .b3-website--menu .product-card-modern.is-featured .product-art-digits {font-size:clamp(5rem,14vw,9rem);right:12%;}
+}
+@media(max-width:700px) {
+  .b3-website--menu .b3-header {height:56px;padding:0 12px;}
+  .b3-website--menu .b3-header > a:first-child {width:64px;height:46px;border-radius:7px;margin-right:auto;}
+  .b3-website--menu .b3-header .header-brand {width:63px;height:45px;}
+  .b3-website--menu .header-utilities {gap:6px;}
+  .b3-website--menu .header-address {max-width:159px;gap:5px;}
+  .b3-website--menu .header-address > span {font-size:11px;max-width:115px;}
+  .b3-website--menu .header-address small {font-size:9px;}
+  .b3-website--menu .header-cart {width:36px;height:36px;}
+  .b3-website--menu .header-mobile-popover {top:56px;}
+  .b3-website--menu .menu-modern--express {padding:13px 14px 90px;}
+  .b3-website--menu .menu-fast-heading {margin-bottom:9px;gap:0;}
+  .b3-website--menu .menu-fast-eyebrow {font-size:9px;letter-spacing:.09em;margin:0 0 3px;}
+  .b3-website--menu .menu-fast-heading h1 {font-size:clamp(1.75rem,7vw,2.15rem);}
+  .b3-website--menu .menu-fast-heading>p {display:none;}
+  .b3-website--menu .menu-toolbar {top:56px;flex-direction:column;align-items:stretch;gap:6px;min-height:0;padding:6px 0 8px;margin-bottom:9px;}
+  .b3-website--menu .menu-search {height:40px;padding:0 12px;border-radius:12px;max-width:none;width:100%;}
+  .b3-website--menu .menu-search input {font-size:14px;width:100%;}
+  .b3-website--menu .category-chips {gap:6px;margin:0 -14px;padding:2px 14px 4px;scrollbar-width:none;}
+  .b3-website--menu .category-chips button {font-size:12px;padding:8px 12px;min-height:34px;}
+  .b3-website--menu .product-grid-modern {gap:10px;}
+  .b3-website--menu .product-card-modern.is-featured {grid-column:auto;grid-row:auto;}
+  .b3-website--menu .product-card-modern.is-featured .product-card-media {aspect-ratio:1;min-height:0;flex:initial;}
+  .b3-website--menu .product-card-modern.is-featured .product-art-digits {font-size:clamp(5rem,17vw,9rem);right:12%;}
+  .b3-website--menu .product-card-info {padding:11px 10px 12px;}
+  .b3-website--menu .product-card-numeral {font-size:9px;margin-bottom:5px;letter-spacing:.07em;}
+  .b3-website--menu .product-card-info h3 {font-size:14px;line-height:1.2;}
+  .b3-website--menu .product-card-info p {font-size:11px;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;line-clamp:2;overflow:hidden;}
+  .b3-website--menu .demo-disclosure {font-size:10px;line-height:1.4;margin-bottom:8px;padding:7px 10px;}
+  .b3-website--menu .design-preview-banner {padding:5px 9px;}
+}
+@media(max-width:360px) {
+  .b3-website--menu .header-address {max-width:123px;}
+  .b3-website--menu .header-address > span {max-width:87px;}
+  .b3-website--menu .product-card-info {padding:9px;}
+}

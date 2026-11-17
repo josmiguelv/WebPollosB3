@@ -26,6 +26,12 @@ El frontend conserva las animaciones de la v1 visual, incluida intro (1,9 s), hi
 
 **Advertencia operativa:** una interfaz de checkout NO equivale a una compra real. El botón de confirmar pedido está deshabilitado mientras no exista contrato validado con el administrador Android. Lo mismo aplica a stock, sedes, delivery, pagos, pedidos y TU VERSO WEB. Tampoco se publican descuentos ni sedes ficticias.
 
+## Actualización v1.1.1 — Carta Express
+
+**Solo cambia la ruta `/carta`.** Se elimina el banner editorial alto de esa página, se compacta su cabecera y se muestran buscador, categorías y productos casi de inmediato en móviles y escritorio. Las categorías permanecen accesibles durante el desplazamiento y las tarjetas destacadas se muestran en la grilla móvil sin bloquear la vista de otros productos. **Inicio, Nosotros, Locales, Combos y el resto de páginas no cambiaron de estructura visual.** Se conservaron las interacciones premium de las fichas, los gestos, el carrito y los datos pendientes de integración.
+
+Detalle y verificación: `docs/CARTA_EXPRESS_V1_1_1.md`.
+
 ## Entregable y límites
 
 Esta entrega contiene: cabecera y portada editorial con carrusel automático/manual, intro de 1,9 s, historias navegables con progreso de 4,5 s, menú y búsqueda alimentados por un adaptador, fichas con transiciones shared-element/FLIP y personalización, módulo de giro por cuadros si se aporta el video oficial procesado, recomendador de tres preguntas, constructor de combos, carrito con persistencia local y animación de agregado, selector de delivery/recojo con Geolocation API opcional, vista de sedes y widget preparado para el canal **TU VERSO WEB**. Incluye diseño responsive, preferencia de movimiento reducido y fuentes corporativas.

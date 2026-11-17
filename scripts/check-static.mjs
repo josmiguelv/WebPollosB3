@@ -30,6 +30,7 @@ console.log('Verificaciones estáticas superadas. No sustituyen pruebas de compi
 const router = get('../client/src/lib/navigation.tsx');
 const commercial = get('../client/src/pages/CommercialViews.tsx');
 const commercialCSS = get('../client/src/pages/commercial.css');
+const menuCSS = get('../client/src/pages/menu-express.css');
 for (const path of ['/carta','/combos','/locales','/carrito','/checkout','/pedidos','/mi-cuenta','/ayuda']) {
   assert.ok(router.includes(`'${path}'`), `Falta ruta ${path}`);
 }
@@ -43,3 +44,15 @@ assert.ok(!home.includes('href="#carta"'),'No dejar enlace antiguo hacia carta e
 assert.ok(!get('../client/src/index.css').includes('@import "tailwindcss"'),'No se requiere tailwind');
 for (const value of [router,commercial,commercialCSS]) assert.doesNotMatch(value,/\bNFC\b|\bQR\b|wordpress|manus/i,'Aparecen referencias prohibidas');
 console.log('Verificación comercial multipágina y restricciones: PASS.');
+
+
+// Carta Express: the giant editorial hero is removed only from /carta.
+assert.ok(home.includes("b3-website--menu"), 'Falta estado exclusivo de carta');
+assert.ok(home.includes('menu-modern--express'), 'Falta estructura compacta de carta');
+assert.doesNotMatch(home, /route==='\\/carta'&&\\s*<><CommercialHero/, 'La carta todavía tiene el hero alto');
+assert.ok(menuCSS.includes('.b3-website--menu .microstrip'), 'Falta ocultar franja en carta');
+assert.ok(menuCSS.includes('.b3-website--menu .menu-toolbar'), 'Falta barra de filtros compacta');
+assert.ok(menuCSS.includes('.b3-website--menu .product-card-modern.is-featured'), 'Falta tarjeta compacta en móvil');
+assert.ok(home.includes("route==='/locales'&& <><CommercialHero"), 'No debe modificarse la cabecera editorial de Locales');
+assert.ok(home.includes("route==='/combos'&& <><CommercialHero"), 'No debe modificarse la cabecera editorial de Combos');
+console.log('Carta Express, preservación de otras páginas: PASS.');
