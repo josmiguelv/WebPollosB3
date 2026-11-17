@@ -46,13 +46,19 @@ for (const value of [router,commercial,commercialCSS]) assert.doesNotMatch(value
 console.log('Verificación comercial multipágina y restricciones: PASS.');
 
 
-// Carta Express: the giant editorial hero is removed only from /carta.
-assert.ok(home.includes("b3-website--menu"), 'Falta estado exclusivo de carta');
-assert.ok(home.includes('menu-modern--express'), 'Falta estructura compacta de carta');
-assert.ok(!home.includes('<CommercialHero eyebrow="CARTA / EXPERIENCIA INTERACTIVA"'), 'La carta todavía tiene el hero alto');
-assert.ok(menuCSS.includes('.b3-website--menu .microstrip'), 'Falta ocultar franja en carta');
-assert.ok(menuCSS.includes('.b3-website--menu .menu-toolbar'), 'Falta barra de filtros compacta');
-assert.ok(menuCSS.includes('.b3-website--menu .product-card-modern.is-featured'), 'Falta tarjeta compacta en móvil');
-assert.ok(home.includes("route==='/locales'&& <><CommercialHero"), 'No debe modificarse la cabecera editorial de Locales');
-assert.ok(home.includes("route==='/combos'&& <><CommercialHero"), 'No debe modificarse la cabecera editorial de Combos');
-console.log('Carta Express, preservación de otras páginas: PASS.');
+// Carta gastronómica: nueva experiencia exclusiva de /carta.
+const gastroCSS = get('../client/src/pages/menu-gastronomica.css');
+assert.ok(home.includes('b3-website--menu'), 'Falta estado exclusivo de carta');
+assert.ok(home.includes('className="gastro-menu layout-gutter"'), 'Falta estructura gastronómica');
+assert.ok(home.includes('className="gastro-product-grid"'), 'Falta cuadrícula de productos');
+assert.ok(home.includes('className="gastro-categories"'), 'Falta filtro por categorías');
+assert.ok(home.includes('className="gastro-search"'), 'Falta buscador de productos');
+assert.ok(home.includes("layoutId={'b3-image-' + product.id}"), 'Falta layoutId animado en Carta');
+assert.ok(home.includes("onClick={() => open(product)}"), 'Falta apertura de ficha original');
+assert.ok(!home.includes('<CommercialHero eyebrow="CARTA / EXPERIENCIA INTERACTIVA"'), 'La carta todavía tiene hero alto');
+assert.ok(menuCSS.includes('.b3-website--menu .microstrip'), 'Falta ocultar franja en Carta');
+assert.ok(gastroCSS.includes('.b3-website--menu .gastro-product-card'), 'Falta diseño foto-prioritario');
+assert.ok(gastroCSS.includes('@media(max-width:700px)'), 'Falta optimización móvil en Carta');
+assert.ok(home.includes("route==='/locales'&& <><CommercialHero"), 'No debe modificarse la cabecera de Locales');
+assert.ok(home.includes("route==='/combos'&& <><CommercialHero"), 'No debe modificarse la cabecera de Combos');
+console.log('Carta gastronómica y preservación de otras páginas: PASS.');
