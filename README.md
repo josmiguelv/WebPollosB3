@@ -97,3 +97,7 @@ La vista de prueba incluye seis fotografías de Pexels con licencia de uso comer
 ## Carta gastronómica para pollería peruana (v1.1.3)
 
 La ruta `/carta` usa tarjetas con fotografías prioritarias, buscador y categorías sticky, precios expresados en soles, y apertura animada de variantes y cremas. En teléfonos presenta 2 columnas y productos desde el primer pantallazo. No se alteró la portada, Nosotros, Locales ni los demás canales. Todos los nombres y categorías provienen del adaptador del catálogo: no se incluyen nuevos platos ni promociones ficticias. Los ejemplos están marcados como referenciales y no activan órdenes reales.
+
+## Carta inmersiva v1.2.0 (experiencia gastronómica)
+
+La ruta `/carta` presenta una carta vertical, de ancho contenido incluso en escritorio, con fondo oscuro, rojo oficial Pollos B3, plato inicial destacado (solo si hay catálogo), carrusel horizontal de exploración, categorías fijas y selector inferior. Buscador, tamaño de letra y tema son interactivos. Se conserva `ProductDetail` con personalización, animación compartida FLIP y carrito existente. Las demás rutas no se han rediseñado. Las fotografías de demostración siguen etiquetadas como referenciales; no se atribuyen a Pollos B3 ni se permiten pedidos reales sin integrar el backend.

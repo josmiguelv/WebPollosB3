@@ -38,7 +38,7 @@ for (const component of ['CartPage','CheckoutPage','OrdersPage','AccountPage','F
   assert.ok(commercial.includes(`function ${component}`),`Falta vista ${component}`);
 }
 assert.ok(home.includes('useRoute()'),'Falta integración del router en la web');
-assert.ok(home.includes('CartPage') && home.includes('ComboBuilder') && home.includes('MenuSection'),'Falta navegado de páginas reales');
+assert.ok(home.includes('CartPage') && home.includes('ComboBuilder') && home.includes('CartaInmersiva'),'Falta navegado de páginas reales');
 assert.ok(commercialCSS.includes('@media(max-width:760px)'), 'Faltan estilos para móvil');
 assert.ok(!home.includes('href="#carta"'),'No dejar enlace antiguo hacia carta en Home');
 assert.ok(!get('../client/src/index.css').includes('@import "tailwindcss"'),'No se requiere tailwind');
@@ -46,19 +46,16 @@ for (const value of [router,commercial,commercialCSS]) assert.doesNotMatch(value
 console.log('Verificación comercial multipágina y restricciones: PASS.');
 
 
-// Carta gastronómica: nueva experiencia exclusiva de /carta.
-const gastroCSS = get('../client/src/pages/menu-gastronomica.css');
-assert.ok(home.includes('b3-website--menu'), 'Falta estado exclusivo de carta');
-assert.ok(home.includes('className="gastro-menu layout-gutter"'), 'Falta estructura gastronómica');
-assert.ok(home.includes('className="gastro-product-grid"'), 'Falta cuadrícula de productos');
-assert.ok(home.includes('className="gastro-categories"'), 'Falta filtro por categorías');
-assert.ok(home.includes('className="gastro-search"'), 'Falta buscador de productos');
-assert.ok(home.includes("layoutId={'b3-image-' + product.id}"), 'Falta layoutId animado en Carta');
-assert.ok(home.includes("onClick={() => open(product)}"), 'Falta apertura de ficha original');
-assert.ok(!home.includes('<CommercialHero eyebrow="CARTA / EXPERIENCIA INTERACTIVA"'), 'La carta todavía tiene hero alto');
-assert.ok(menuCSS.includes('.b3-website--menu .microstrip'), 'Falta ocultar franja en Carta');
-assert.ok(gastroCSS.includes('.b3-website--menu .gastro-product-card'), 'Falta diseño foto-prioritario');
-assert.ok(gastroCSS.includes('@media(max-width:700px)'), 'Falta optimización móvil en Carta');
-assert.ok(home.includes("route==='/locales'&& <><CommercialHero"), 'No debe modificarse la cabecera de Locales');
-assert.ok(home.includes("route==='/combos'&& <><CommercialHero"), 'No debe modificarse la cabecera de Combos');
-console.log('Carta gastronómica y preservación de otras páginas: PASS.');
+// Carta inmersiva solo en /carta.
+const ci = get('../client/src/pages/CartaInmersiva.tsx');
+const ciCss = get('../client/src/pages/carta-inmersiva.css');
+assert.ok(home.includes("route==='/carta'&& <CartaInmersiva"),'Carta inmersiva integrada');
+assert.ok(!home.includes('function MenuSection('),'Se eliminó la Carta anterior del render');
+assert.ok(ci.includes('b3-ci-shell')&&ci.includes('b3-ci-lead')&&ci.includes('b3-ci-dish'),'Carta vertical gastronómica');
+assert.ok(ci.includes('b3-ci-sheet') && ci.includes('b3-ci-chips'),'Selector inferior de categorías');
+assert.ok(ci.includes('setSearchOpen')&&ci.includes('setLargeText')&&ci.includes('setLightTheme'),'Controles funcionales');
+assert.ok(ci.includes('layoutId={`b3-image-${product.id}`}'),'FLIP preservado');
+assert.ok(ciCss.includes('max-width:656px')&&ciCss.includes('.b3-website--menu'),'Diseño central limitado a Carta');
+assert.ok(home.includes("route==='/locales'&& <><CommercialHero"),'Locales intacto');
+assert.ok(home.includes("route==='/combos'&& <><CommercialHero"),'Combos intacto');
+console.log('Carta inmersiva Pollos B3 / v1.2.0: PASS.');

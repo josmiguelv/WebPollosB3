@@ -8,7 +8,7 @@ import { SiteLink, navigate, useRoute, pageTitles } from '@/lib/navigation';
 import { AboutPage, AccountPage, CartPage, CheckoutPage, CommercialHero, FeaturedIntro, HelpPage, HomePathways, NotFoundPage, OrdersPage, PromotionsPage } from './CommercialViews';
 import './premium.css';
 import './menu-express.css';
-import './menu-gastronomica.css';
+import { CartaInmersiva } from './CartaInmersiva';
 
 type Notice = { title: string; text: string } | null;
 export type CartItem = { key: string; productId: string; name: string; variant: string; unit: number; extras: string[]; qty: number; isCombo?: boolean };
@@ -217,83 +217,6 @@ function ProductDetail({ product, close, add }: { product: B3Product; close: () 
   </motion.div>;
 }
 
-function MenuSection({ data, demo, error, open, query, setQuery }: { data: B3Catalog | null; demo: boolean; error: string; open: (p: B3Product) => void; query: string; setQuery: (s: string) => void }) {
-  const [category, setCategory] = useState('all');
-  const products = data?.products ?? [];
-  const categories = data?.categories ?? [];
-  const categoryTitle = category === 'all' ? 'Encuentra tu próximo antojo' : (categories.find(item => item.id === category)?.name ?? 'Nuestra carta');
-  const normalizedQuery = query.trim().toLocaleLowerCase('es-PE');
-  const items = products.filter(product => (category === 'all' || product.categoryId === category) && (product.name + ' ' + product.description).toLocaleLowerCase('es-PE').includes(normalizedQuery));
-  const eligiblePrice = (product: B3Product) => {
-    const options = product.variants.filter(variant => variant.available !== false);
-    return options.length ? Math.min(...options.map(variant => variant.price)) : null;
-  };
-  return <section className="gastro-menu layout-gutter" id="carta" aria-labelledby="menu-title">
-    <header className="gastro-menu-heading">
-      <div>
-        <p className="gastro-eyebrow"><Flame size={15} aria-hidden="true"/> POLLOS B3 · CARTA</p>
-        <h1 id="menu-title">A la brasa, <em>a tu manera.</em></h1>
-        <p className="gastro-menu-lead">Explora la carta, elige tu presentación y personaliza tu pedido.</p>
-      </div>
-      <span className="gastro-head-stamp" aria-hidden="true">B3 <small>LA CARTA</small></span>
-    </header>
-
-    <div className="gastro-filter-bar" role="search">
-      <label className="gastro-search"><Search size={19} aria-hidden="true"/>
-        <input type="search" value={query} onChange={event => setQuery(event.target.value)}
-          placeholder="¿Qué se te antoja hoy?" aria-label="Buscar productos en la carta"/>
-        {query && <button type="button" aria-label="Borrar búsqueda" onClick={() => setQuery('')}><X size={17}/></button>}
-      </label>
-      <nav className="gastro-categories" aria-label="Categorías de la carta">
-        <button type="button" className={category === 'all' ? 'is-current' : ''} aria-pressed={category === 'all'} onClick={() => setCategory('all')}>Toda la carta</button>
-        {categories.map(item => <button type="button" key={item.id} className={category === item.id ? 'is-current' : ''} aria-pressed={category === item.id} onClick={() => setCategory(item.id)}>{item.name}</button>)}
-      </nav>
-    </div>
-
-    <div className="gastro-result-heading" aria-live="polite">
-      <h2>{categoryTitle}</h2>
-      <span>{items.length} {items.length === 1 ? 'opción' : 'opciones'}</span>
-    </div>
-    {error && <p className="menu-error" role="alert">No se pudo actualizar la carta: {error}</p>}
-    {demo && <div className="gastro-demo-disclosure"><CircleHelp size={18} aria-hidden="true"/><span>Vista de diseño: fotos, productos y precios referenciales. No son la carta oficial de Pollos B3 ni permiten hacer pedidos reales.</span></div>}
-
-    {items.length > 0 ? <div className="gastro-product-grid">
-      {items.map((product, index) => {
-        const price = eligiblePrice(product);
-        const categoryLabel = categories.find(item => item.id === product.categoryId)?.name ?? 'Nuestra carta';
-        return <motion.button type="button" layout key={product.id}
-          className="gastro-product-card"
-          onClick={() => open(product)}
-          disabled={!product.available || price === null}
-          aria-label={'Ver opciones de ' + product.name + (price === null ? '' : ', desde ' + soles(price))}>
-          <motion.div className="gastro-product-media" data-product-id={product.id}
-            layoutId={'b3-image-' + product.id} transition={{type:'tween',duration:.48}}>
-            <ProductArt product={product} featured={index === 0}/>
-            <span className="gastro-media-gradient" aria-hidden="true"/>
-            {product.id.startsWith('demo-') && <span className="gastro-media-note">FOTO REFERENCIAL</span>}
-            {!product.available && <span className="gastro-unavailable">NO DISPONIBLE</span>}
-          </motion.div>
-          <div className="gastro-product-content">
-            <span className="gastro-product-category">{categoryLabel}</span>
-            <h3>{product.name}</h3>
-            <p>{product.description}</p>
-            <div className="gastro-product-action">
-              <span><small>{price === null ? 'CONSULTAR' : 'DESDE'}</small><strong>{price === null ? 'No disponible' : soles(price)}</strong></span>
-              <span className="gastro-plus" aria-hidden="true"><Plus size={20} strokeWidth={2}/></span>
-            </div>
-          </div>
-        </motion.button>;
-      })}
-    </div> : <div className="gastro-empty">
-      <span aria-hidden="true">B3</span>
-      <div><h3>{query || category !== 'all' ? 'No encontramos opciones.' : 'La carta estará disponible pronto.'}</h3>
-        <p>{query || category !== 'all' ? 'Prueba con otra búsqueda o explora todas las categorías.' : 'Estamos preparando la conexión con el catálogo real de Pollos B3. No publicamos productos ni precios sin confirmar.'}</p>
-        {(query || category !== 'all') && <button type="button" onClick={() => {setQuery('');setCategory('all');}}>Ver toda la carta <ArrowRight size={17}/></button>}
-      </div>
-    </div>}
-  </section>;
-}
-
 const questions = [
   { text: '¿Cuánta hambre tienes?', answers: ['Poca', 'Normal', 'Mucha'] },
   { text: '¿Te gusta el picante?', answers: ['Nada', 'Un poco', 'Mucho'] },
@@ -437,7 +360,7 @@ export default function Home() {
         <HomePathways onChat={()=>setChatOpen(true)}/>
         <section className="support-modern layout-gutter" id="atencion"><div className="support-orbital"><MessageCircle size={88} strokeWidth={.7}/></div><div><p className="section-index section-index--light">TU VERSO / ATENCIÓN</p><h2>Hablemos.<br/><i>Sin salir de aquí.</i></h2><p>Un espacio de atención dentro de Pollos B3, preparado para el canal WEB de TU VERSO.</p><button className="b3-pill b3-pill--white" onClick={()=>setChatOpen(true)}>ABRIR ATENCIÓN WEB <ArrowUpRight size={18}/></button></div><span className="support-side-label">TU VERSO · BY INTEGRA B2G</span></section>
       </>}
-      {route==='/carta'&& <MenuSection data={data} demo={demo} error={error} open={setOpenProduct} query={query} setQuery={setQuery}/>}
+      {route==='/carta'&& <CartaInmersiva data={data} demo={demo} error={error} onOpen={setOpenProduct} onOpenCart={openCart} cartCount={count} query={query} setQuery={setQuery}/>}
       {route==='/combos'&& <><CommercialHero eyebrow="EXPERIENCIA / COMBOS" heading="Tu combo." highlight="Tus reglas." description="Una experiencia interactiva de tres pasos para elegir algo a tu medida. Las opciones y descuentos dependen de la carta oficial."/><ComboBuilder data={data} add={addToCart}/></>}
       {route==='/locales'&& <><CommercialHero eyebrow="SANTA ANITA / LOCALES" heading="Cerca de ti." highlight="A lo B3." description="Selecciona dónde recoger o introduce tu dirección de entrega. La cobertura y disponibilidad se validarán desde administración."><button className="commercial-button commercial-button--light" onClick={()=>setLocationOpen(true)}>ELEGIR MODALIDAD <ArrowRight size={17}/></button></CommercialHero><Locations data={data} openDelivery={()=>setLocationOpen(true)}/></>}
       {route==='/promociones'&&<PromotionsPage/>}
