@@ -58,7 +58,7 @@ export function CartaInmersiva({ data, demo, error, onOpen, cart, total, setQty,
   const discoveries = products.filter(p => p.available && p.id !== lead?.id && minPrice(p) !== null).slice(0, 7);
   const categoryEntries = categories.map(category => ({ ...category, products: matching.filter(product => product.categoryId === category.id) }));
   const remaining = matching.filter(product => !categories.some(category => category.id === product.categoryId));
-  const total = matching.length;
+  const productCount = matching.length;
 
   useEffect(() => { if (searchOpen) searchInput.current?.focus(); }, [searchOpen]);
   useEffect(() => {
@@ -130,7 +130,7 @@ export function CartaInmersiva({ data, demo, error, onOpen, cart, total, setQty,
       </>}
 
       <section className="b3-ci-catalog" aria-labelledby="b3-ci-catalog-title">
-        <div className="b3-ci-catalog-heading"><h2 id="b3-ci-catalog-title">La carta <span aria-hidden="true">↓</span></h2><span>{total} {total === 1 ? 'producto' : 'productos'}</span></div>
+        <div className="b3-ci-catalog-heading"><h2 id="b3-ci-catalog-title">La carta <span aria-hidden="true">↓</span></h2><span>{productCount} {productCount === 1 ? 'producto' : 'productos'}</span></div>
         {error && <p className="b3-ci-error" role="alert">No se pudo actualizar la carta: {error}</p>}
         <div className="b3-ci-sticky-categories">
           <div className="b3-ci-chips" ref={chipRail}>{categoryEntries.map(cat => <button key={cat.id} data-chip={cat.id} aria-current={activeCategory === cat.id ? 'true' : undefined} onClick={() => moveTo(cat.id)} className={activeCategory === cat.id ? 'is-selected' : ''}>{cat.name}</button>)}</div>
