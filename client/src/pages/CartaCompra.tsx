@@ -40,7 +40,7 @@ export function CartaCompra({cart,total,data,delivery,demo,setQty,setDelivery,on
       <button type="button" aria-label="Cerrar y regresar a Carta" onClick={onClose}><X size={21}/></button>
     </header>
     <div className="b3-ci-buyflow-progress" aria-label={'Paso '+(index+1)+' de 4'}>{steps.map((s,i)=><span key={s} className={i<=index?'active':''}/>)}</div>
-    <main className="b3-ci-buyflow-main">
+    <div className="b3-ci-buyflow-main">
       <AnimatePresence mode="wait" initial={false}><motion.div key={step} initial={reduced?false:{opacity:0,x:14}} animate={{opacity:1,x:0}} exit={reduced?undefined:{opacity:0,x:-10}} transition={{duration:reduced?0:.18}}>
       {step==='cart'&&<>
         <p className="b3-ci-buyflow-note">{count?'Revisa tu pedido antes de continuar.':'Todavía no has elegido productos de la carta.'}</p>
@@ -92,7 +92,7 @@ export function CartaCompra({cart,total,data,delivery,demo,setQty,setDelivery,on
         <div className="b3-ci-buyflow-warning"><ShieldCheck size={23}/><div><b>Pedidos y pagos deshabilitados</b><p>No se confirmará ningún pedido hasta conectar el administrador compartido y validar productos, entrega y método de pago.</p></div></div>
       </>}
       </motion.div></AnimatePresence>
-    </main>
+    </div>
     <footer className="b3-ci-buyflow-footer">
       <div><span>Subtotal estimado</span><strong>{soles(total)}</strong></div>
       {demo&&<small>Precios demostrativos, no oficiales.</small>}
