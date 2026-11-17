@@ -2,6 +2,9 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { ArrowLeft, ArrowUp, Check, ChevronDown, List, Plus, Search, Settings2, ShoppingBag, Type, X } from 'lucide-react';
 import type { B3Catalog, B3Product } from '@/lib/storefront/catalog';
+import type { CartItem, Delivery } from './Home';
+import { B3_CARTA_PILOT } from '@/lib/navigation';
+import { CartaCompra } from './CartaCompra';
 import { soles } from '@/lib/storefront/catalog';
 import { SiteLink } from '@/lib/navigation';
 import './carta-inmersiva.css';
@@ -11,8 +14,11 @@ type Props = {
   demo: boolean;
   error: string;
   onOpen: (product: B3Product) => void;
-  onOpenCart: () => void;
-  cartCount: number;
+  cart: CartItem[];
+  total: number;
+  setQty: (key:string,qty:number) => void;
+  delivery: Delivery;
+  setDelivery: (value:Delivery) => void;
   query: string;
   setQuery: (value: string) => void;
 };
@@ -32,7 +38,10 @@ function DishPhoto({ product, priority = false, label = false }: { product: B3Pr
   </div>;
 }
 
-export function CartaInmersiva({ data, demo, error, onOpen, onOpenCart, cartCount, query, setQuery }: Props) {
+export function CartaInmersiva({ data, demo, error, onOpen, cart, total, setQty, delivery, setDelivery, query, setQuery }: Props) {
+  const [purchaseOpen,setPurchaseOpen]=useState(false);
+  const cartCount=cart.reduce((sum,item)=>sum+item.qty,0);
+  const openPurchase=()=>{setPurchaseOpen(true);window.scrollTo({top:0,behavior:'instant'});};
   const [searchOpen, setSearchOpen] = useState(false);
   const [largeText, setLargeText] = useState(false);
   const [lightTheme, setLightTheme] = useState(false);
@@ -86,13 +95,14 @@ export function CartaInmersiva({ data, demo, error, onOpen, onOpenCart, cartCoun
   const mainButton = (product: B3Product, extraClass = '') => <button type="button" className={`b3-ci-add ${extraClass}`} disabled={!available(product)} onClick={() => onOpen(product)}>{available(product) ? 'Elegir y agregar' : 'No disponible'} <Plus size={19} strokeWidth={2.6}/></button>;
 
   return <div className={`b3-ci-shell ${largeText ? 'b3-ci-large-text' : ''} ${lightTheme ? 'b3-ci-light' : ''}`}>
+    {purchaseOpen ? <CartaCompra cart={cart} total={total} data={data} delivery={delivery} demo={demo} setQty={setQty} setDelivery={setDelivery} onClose={()=>{setPurchaseOpen(false);window.scrollTo({top:0,behavior:'instant'});}}/> : <>
     <header className="b3-ci-header">
       <SiteLink className="b3-ci-brand" to="/" aria-label="Ir al inicio de Pollos B3"><img src="/brand/pollos-b3-logo.png" alt="Pollos B3"/><span>Pollos B3</span></SiteLink>
       <div className="b3-ci-tools">
         <button aria-label={searchOpen ? 'Cerrar buscador' : 'Buscar plato'} aria-expanded={searchOpen} title="Buscar" onClick={() => setSearchOpen(open => !open)}><Search size={21}/></button>
         <button aria-label={largeText ? 'Usar texto normal' : 'Aumentar texto'} aria-pressed={largeText} title="Tamaño de letra" onClick={() => setLargeText(old => !old)}><Type size={23}/></button>
         <button aria-label={lightTheme ? 'Activar fondo oscuro' : 'Activar fondo claro'} aria-pressed={lightTheme} title="Alternar apariencia" onClick={() => setLightTheme(old => !old)}><Settings2 size={22}/></button>
-        <button className="b3-ci-cart" aria-label={`Abrir carrito, ${cartCount} productos`} onClick={onOpenCart}><ShoppingBag size={21}/>{cartCount > 0 && <span>{cartCount}</span>}</button>
+        <button className="b3-ci-cart" aria-label={`Abrir carrito, ${cartCount} productos`} onClick={openPurchase}><ShoppingBag size={21}/>{cartCount > 0 && <span>{cartCount}</span>}</button>
       </div>
     </header>
     <AnimatePresence initial={false}>{searchOpen && <motion.div className="b3-ci-search-bar" initial={reduced ? false : { height: 0, opacity: 0 }} animate={{ height: 'auto', opacity: 1 }} exit={{ height: 0, opacity: 0 }}><Search size={20}/><input ref={searchInput} type="search" value={query} onChange={event => setQuery(event.target.value)} placeholder="Buscar en la carta de Pollos B3" aria-label="Buscar en la carta"/>{query && <button aria-label="Limpiar búsqueda" onClick={() => setQuery('')}><X size={18}/></button>}</motion.div>}</AnimatePresence>
@@ -136,8 +146,9 @@ export function CartaInmersiva({ data, demo, error, onOpen, onOpenCart, cartCoun
         </section>)}
         {remaining.length > 0 && <section id="b3-ci-cat-otros" data-b3-ci-category="otros" className="b3-ci-category-section"><div className="b3-ci-section-heading"><h3>Otros productos</h3><span>{remaining.length} productos</span></div>{remaining.map(product => <article className="b3-ci-dish" key={product.id}><motion.button type="button" className="b3-ci-dish-photo" data-product-id={product.id} layoutId={`b3-image-${product.id}`} transition={{type:'tween',duration:.48}} onClick={() => onOpen(product)}><DishPhoto product={product} label/></motion.button><div className="b3-ci-dish-copy"><h4>{product.name}</h4><p>{product.description}</p><strong>{minPrice(product) === null ? 'Precio por confirmar' : soles(minPrice(product)!)}</strong>{mainButton(product)}</div></article>)}</section>}
       </section>
-      <footer className="b3-ci-endnote"><img src="/brand/pollos-b3-logo.png" alt=""/><span>POLLOS B3 · SANTA ANITA</span><p>Vuelve al inicio para explorar la experiencia completa.</p><SiteLink to="/">Ir a Inicio <ArrowLeft size={16}/></SiteLink></footer>
+      <footer className="b3-ci-endnote"><img src="/brand/pollos-b3-logo.png" alt=""/><span>POLLOS B3 · SANTA ANITA</span>{!B3_CARTA_PILOT && <><p>Vuelve al inicio para explorar la experiencia completa.</p><SiteLink to="/">Ir a Inicio <ArrowLeft size={16}/></SiteLink></>}</footer>
     </div>
+    {cartCount>0&&!categorySheet&&<button type="button" className="b3-ci-buybar" onClick={openPurchase} aria-label={"Ver mi pedido, "+cartCount+" productos"}><span><b>{cartCount}</b> Ver mi pedido</span><strong>{soles(total)} <span aria-hidden="true">→</span></strong></button>}
     <AnimatePresence>{showTop && !categorySheet && <motion.button type="button" className="b3-ci-top" aria-label="Volver arriba" initial={{opacity:0,y:12}} animate={{opacity:1,y:0}} exit={{opacity:0,y:12}} onClick={() => window.scrollTo({top:0,behavior:reduced?'auto':'smooth'})}><ArrowUp size={16}/> Arriba</motion.button>}</AnimatePresence>
     <AnimatePresence>{categorySheet && <motion.div className="b3-ci-sheet-layer" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}>
       <button className="b3-ci-sheet-backdrop" aria-label="Cerrar categorías" onClick={() => setCategorySheet(false)}/>
@@ -147,5 +158,6 @@ export function CartaInmersiva({ data, demo, error, onOpen, onOpenCart, cartCoun
         {remaining.length > 0 && <button className="b3-ci-sheet-category" onClick={() => moveTo('otros')}><strong>Otros productos</strong><span>{remaining.length} productos</span></button>}
       </motion.section>
     </motion.div>}</AnimatePresence>
+    </>}
   </div>;
 }

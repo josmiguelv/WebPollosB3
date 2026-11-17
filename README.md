@@ -104,3 +104,6 @@ La ruta `/carta` presenta una carta vertical, de ancho contenido incluso en escr
 
 ## Piloto exclusivo de Carta (v1.2.1)
 La web entra directamente en /carta, con la animación de introducción de 1,9 segundos y un indicador de preparación. Las demás rutas siguen programadas y permanecen ocultas hasta que se establezca VITE_B3_CARTA_PILOT=false. El diseño comercial de las demás páginas no se cambia.
+
+### Continuación de compra dentro de Carta
+En el piloto, **Mi pedido, Delivery/Recojo, Datos y Resumen/Pago** aparecen dentro de la misma columna de Carta y comparten el carrito persistente. No se navega a /checkout ni se procesa pago. Los métodos de pago son solo opciones visuales: confirmar está deshabilitado hasta integrar pedidos, precios, cobertura y medios de pago con el administrador de Pollos B3.

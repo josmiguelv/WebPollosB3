@@ -1,0 +1,58 @@
+/* Compra dentro de la misma columna de Carta. No contiene rutas externas. */
+.b3-website--menu .b3-ci-buyflow{min-height:100svh;display:flex;flex-direction:column;background:var(--ci-bg);color:var(--ci-fg)}
+.b3-website--menu .b3-ci-buyflow-head{position:sticky;top:0;z-index:28;background:var(--ci-bg);border-bottom:1px solid var(--ci-line);min-height:78px;padding:11px 18px;display:flex;align-items:center;gap:10px;justify-content:space-between}
+.b3-website--menu .b3-ci-buyflow-head button{width:42px;height:42px;display:grid;place-items:center;border-radius:12px;border:1px solid var(--ci-line);background:var(--ci-card);color:var(--ci-fg)}
+.b3-website--menu .b3-ci-buyflow-head>div{text-align:center;min-width:0}
+.b3-website--menu .b3-ci-buyflow-head small{color:var(--ci-accent);font-size:10px;font-weight:800;letter-spacing:.1em}
+.b3-website--menu .b3-ci-buyflow-head h1{font:800 23px Montserrat,sans-serif;letter-spacing:-.045em;margin:4px 0 0}
+.b3-website--menu .b3-ci-buyflow-progress{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;padding:12px 20px}
+.b3-website--menu .b3-ci-buyflow-progress span{height:5px;border-radius:5px;background:var(--ci-line)}
+.b3-website--menu .b3-ci-buyflow-progress span.active{background:var(--ci-accent)}
+.b3-website--menu .b3-ci-buyflow-main{flex:1;padding:17px 22px 190px;min-height:350px}
+.b3-website--menu .b3-ci-buyflow-note{color:var(--ci-muted);font-size:14px;line-height:1.65;margin:3px 0 20px}
+.b3-website--menu .b3-ci-buyflow-item{display:grid;grid-template-columns:68px 1fr auto;gap:13px;align-items:center;padding:15px 0;border-bottom:1px solid var(--ci-line)}
+.b3-website--menu .b3-ci-buyflow-thumb{width:68px;height:68px;border-radius:10px;overflow:hidden;display:grid;place-items:center;color:#fff;background:#542112;font:800 26px Montserrat}
+.b3-website--menu .b3-ci-buyflow-thumb img{width:100%;height:100%;object-fit:cover}
+.b3-website--menu .b3-ci-buyflow-item-text{min-width:0}
+.b3-website--menu .b3-ci-buyflow-item-text h2{font:800 15px/1.3 'DM Sans',sans-serif;margin:0 0 4px}
+.b3-website--menu .b3-ci-buyflow-item-text p,.b3-website--menu .b3-ci-buyflow-item-text small{display:block;font-size:11px;color:var(--ci-muted);line-height:1.45;margin:0}
+.b3-website--menu .b3-ci-buyflow-item-text strong{display:block;color:var(--ci-accent);margin-top:6px;font-size:15px}
+.b3-website--menu .b3-ci-buyflow-quantity{display:flex;align-items:center;gap:5px}
+.b3-website--menu .b3-ci-buyflow-quantity button{border:1px solid var(--ci-line);color:var(--ci-fg);background:var(--ci-card);border-radius:10px;width:34px;height:38px;display:grid;place-items:center}
+.b3-website--menu .b3-ci-buyflow-quantity b{min-width:18px;text-align:center}
+.b3-website--menu .b3-ci-buyflow-clear{border:0;background:transparent;color:var(--ci-muted);padding:18px 0;font-size:13px;font-weight:700}
+.b3-website--menu .b3-ci-buyflow-empty{border:1px solid var(--ci-line);background:var(--ci-card);padding:38px 20px;border-radius:15px;display:flex;flex-direction:column;align-items:center;gap:15px;text-align:center}
+.b3-website--menu .b3-ci-buyflow-empty p{color:var(--ci-muted)}
+.b3-website--menu .b3-ci-buyflow-empty button{border:0;border-radius:11px;padding:12px 15px;color:#fff;background:var(--ci-accent);font-weight:800;display:flex;align-items:center;gap:7px}
+.b3-website--menu .b3-ci-buyflow-modes{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:10px 0 23px}
+.b3-website--menu .b3-ci-buyflow-modes button{display:flex;flex-direction:column;gap:8px;align-items:flex-start;background:var(--ci-card);color:var(--ci-fg);border:1px solid var(--ci-line);padding:18px;border-radius:14px}
+.b3-website--menu .b3-ci-buyflow-modes button.selected{border-color:var(--ci-accent);box-shadow:inset 0 0 0 1px var(--ci-accent)}
+.b3-website--menu .b3-ci-buyflow-modes svg{color:var(--ci-accent)}
+.b3-website--menu .b3-ci-buyflow-modes small{color:var(--ci-muted)}
+.b3-website--menu .b3-ci-buyflow-fields{display:flex;flex-direction:column;gap:18px}
+.b3-website--menu .b3-ci-buyflow-fields label{display:flex;flex-direction:column;gap:8px;font-size:13px;font-weight:800}
+.b3-website--menu .b3-ci-buyflow-fields input,.b3-website--menu .b3-ci-buyflow-fields select,.b3-website--menu .b3-ci-buyflow-fields textarea{width:100%;border:1px solid var(--ci-line);border-radius:12px;padding:14px;color:var(--ci-fg);background:var(--ci-card);outline:0;font-size:15px}
+.b3-website--menu .b3-ci-buyflow-fields input:focus,.b3-website--menu .b3-ci-buyflow-fields select:focus,.b3-website--menu .b3-ci-buyflow-fields textarea:focus{border-color:var(--ci-accent)}
+.b3-website--menu .b3-ci-buyflow-fields p{color:var(--ci-muted);font-size:12px;line-height:1.6;margin:0}
+.b3-website--menu .b3-ci-buyflow-summary{border:1px solid var(--ci-line);background:var(--ci-card);padding:18px;border-radius:14px}
+.b3-website--menu .b3-ci-buyflow-summary h2,.b3-website--menu .b3-ci-buyflow-method-title{font:800 21px Montserrat,sans-serif;letter-spacing:-.05em;margin:0 0 12px}
+.b3-website--menu .b3-ci-buyflow-summary>div{display:flex;justify-content:space-between;gap:15px;padding:12px 0;border-bottom:1px solid var(--ci-line);font-size:13px}
+.b3-website--menu .b3-ci-buyflow-summary>div:last-child{border-bottom:0}
+.b3-website--menu .b3-ci-buyflow-summary span{color:var(--ci-muted)}
+.b3-website--menu .b3-ci-buyflow-summary b{text-align:right;max-width:55%;word-break:break-word}
+.b3-website--menu .b3-ci-buyflow-method-title{margin:23px 0 12px}
+.b3-website--menu .b3-ci-buyflow-methods{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.b3-website--menu .b3-ci-buyflow-methods button{background:var(--ci-card);color:var(--ci-fg);border:1px solid var(--ci-line);border-radius:11px;min-height:59px;padding:12px;display:flex;align-items:center;gap:10px;font-weight:800;font-size:13px}
+.b3-website--menu .b3-ci-buyflow-methods button.selected{border-color:var(--ci-accent)}
+.b3-website--menu .b3-ci-buyflow-methods button svg:last-child:not(:first-child){margin-left:auto;color:var(--ci-accent)}
+.b3-website--menu .b3-ci-buyflow-warning{display:flex;gap:10px;background:#402219;color:#fff;padding:17px;border-radius:13px;margin:23px 0}
+.b3-website--menu .b3-ci-buyflow-warning>svg{flex:none;color:#ff9f7f}
+.b3-website--menu .b3-ci-buyflow-warning p{font-size:12px;line-height:1.6;color:#ffd8ce;margin:5px 0 0}
+.b3-website--menu .b3-ci-buyflow-footer{position:sticky;bottom:0;z-index:30;border-top:1px solid var(--ci-line);background:var(--ci-bg);padding:14px 21px max(17px,env(safe-area-inset-bottom));margin-top:auto;box-shadow:0 -18px 45px #0007}
+.b3-website--menu .b3-ci-buyflow-footer>div{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:10px}
+.b3-website--menu .b3-ci-buyflow-footer>div span{color:var(--ci-muted);font-size:13px}
+.b3-website--menu .b3-ci-buyflow-footer>div strong{font:800 23px Montserrat,sans-serif}
+.b3-website--menu .b3-ci-buyflow-footer>button{min-height:52px;width:100%;border:0;border-radius:12px;background:var(--ci-accent);color:#fff;font-weight:800;display:flex;justify-content:center;align-items:center;gap:10px}
+.b3-website--menu .b3-ci-buyflow-footer>button:disabled{opacity:.43;cursor:not-allowed}
+.b3-website--menu .b3-ci-buyflow-footer small{display:block;margin:8px 0;color:var(--ci-muted);font-size:10px;line-height:1.5;text-align:center}
+@media(max-width:680px){.b3-website--menu .b3-ci-buyflow-head{min-height:68px;padding:8px 12px}.b3-website--menu .b3-ci-buyflow-head button{width:38px;height:38px}.b3-website--menu .b3-ci-buyflow-head h1{font-size:19px}.b3-website--menu .b3-ci-buyflow-main{padding:15px 14px 160px}.b3-website--menu .b3-ci-buyflow-progress{padding:10px 14px}.b3-website--menu .b3-ci-buyflow-item{grid-template-columns:55px minmax(0,1fr);gap:9px}.b3-website--menu .b3-ci-buyflow-thumb{width:55px;height:55px}.b3-website--menu .b3-ci-buyflow-quantity{grid-column:2}.b3-website--menu .b3-ci-buyflow-footer{padding:12px 14px max(14px,env(safe-area-inset-bottom))}}

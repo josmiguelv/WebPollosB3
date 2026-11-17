@@ -177,3 +177,17 @@
 .b3-website--menu .b3-pilot-loader i{display:block;height:100%;width:42%;background:#fff;border-radius:5px;animation:b3-pilot-progress 1.9s ease-in-out both}
 @keyframes b3-pilot-progress{from{width:6%}to{width:100%}}
 @media(prefers-reduced-motion:reduce){.b3-website--menu .b3-pilot-loader i{animation:none;width:100%}}
+
+/* Barra de pedido: siempre contenida visualmente en el marco de 656 px. */
+.b3-website--menu .b3-ci-buybar{position:fixed;z-index:51;bottom:max(14px,env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:min(624px,calc(100vw - 24px));display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 13px;min-height:60px;border:0;border-radius:15px;background:var(--ci-accent);color:#fff;font-size:14px;font-weight:800;box-shadow:0 12px 35px #000a}
+.b3-website--menu .b3-ci-buybar>span{display:flex;align-items:center;gap:10px}
+.b3-website--menu .b3-ci-buybar b{display:grid;place-items:center;min-width:34px;min-height:34px;background:#0003;border-radius:9px}
+.b3-website--menu .b3-ci-buybar strong{white-space:nowrap;background:#0002;padding:9px;border-radius:9px}
+.b3-website--menu .b3-ci-top{bottom:90px}
+.b3-website--menu .detail-backdrop{align-items:center;justify-content:center;padding:8px}
+.b3-website--menu .detail-sheet{max-width:656px;width:100%;height:auto;max-height:94svh;display:flex;flex-direction:column;overflow:auto;border-radius:18px}
+.b3-website--menu .detail-media{height:min(39svh,340px);min-height:210px;flex:none;grid-row:auto}
+.b3-website--menu .detail-body{overflow:visible;flex:1}
+.b3-website--menu .detail-body h2{font-size:clamp(26px,5vw,38px)}
+.b3-website--menu .detail-order{grid-column:auto;flex:none}
+@media(max-width:680px){.b3-website--menu .b3-ci-buybar{width:calc(100vw - 22px);font-size:13px}.b3-website--menu .detail-backdrop{padding:0;align-items:flex-end}.b3-website--menu .detail-sheet{height:96svh;max-height:96svh;max-width:100%;border-radius:22px 22px 0 0}.b3-website--menu .detail-media{height:32svh;min-height:190px}}

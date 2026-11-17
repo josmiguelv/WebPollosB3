@@ -27,3 +27,6 @@ assert.ok(!carta.includes('115 platos'),'No inventar conteos de productos');
 assert.ok(!carta.includes('Jalea Mixta'),'No copiar menú de otro restaurante');
 assert.ok(carta.includes('design-notice')&&carta.includes('FOTOGRAFÍA REFERENCIAL'),'Etiquetado demo');
 console.log('Comprobación estática Carta Inmersiva: PASS.');
+
+assert.ok(carta.includes('<CartaCompra'),'Compra dentro del marco de Carta');
+assert.ok(carta.includes('b3-ci-buybar'),'Barra de Mi pedido');
