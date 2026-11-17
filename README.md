@@ -101,3 +101,6 @@ La ruta `/carta` usa tarjetas con fotografías prioritarias, buscador y categor�
 ## Carta inmersiva v1.2.0 (experiencia gastronómica)
 
 La ruta `/carta` presenta una carta vertical, de ancho contenido incluso en escritorio, con fondo oscuro, rojo oficial Pollos B3, plato inicial destacado (solo si hay catálogo), carrusel horizontal de exploración, categorías fijas y selector inferior. Buscador, tamaño de letra y tema son interactivos. Se conserva `ProductDetail` con personalización, animación compartida FLIP y carrito existente. Las demás rutas no se han rediseñado. Las fotografías de demostración siguen etiquetadas como referenciales; no se atribuyen a Pollos B3 ni se permiten pedidos reales sin integrar el backend.
+
+## Piloto exclusivo de Carta (v1.2.1)
+La web entra directamente en /carta, con la animación de introducción de 1,9 segundos y un indicador de preparación. Las demás rutas siguen programadas y permanecen ocultas hasta que se establezca VITE_B3_CARTA_PILOT=false. El diseño comercial de las demás páginas no se cambia.

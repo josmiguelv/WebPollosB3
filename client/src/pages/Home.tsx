@@ -4,7 +4,7 @@ import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from 'framer-m
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Check, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, CircleHelp, Clock3, Flame, Heart, Instagram, MapPin, Menu, MessageCircle, Minus, Navigation, Plus, RotateCcw, Search, ShoppingBag, Sparkles, Store, Truck, UserRound, UtensilsCrossed, X } from 'lucide-react';
 import { B3Catalog, B3Product, B3Story, designFixtures, editorialStories, loadPublicCatalog, soles, referenceMedia } from '@/lib/storefront/catalog';
 import { SpinCanvas } from '@/features/menu/SpinCanvas';
-import { SiteLink, navigate, useRoute, pageTitles } from '@/lib/navigation';
+import { SiteLink, navigate, useRoute, pageTitles, B3_CARTA_PILOT } from '@/lib/navigation';
 import { AboutPage, AccountPage, CartPage, CheckoutPage, CommercialHero, FeaturedIntro, HelpPage, HomePathways, NotFoundPage, OrdersPage, PromotionsPage } from './CommercialViews';
 import './premium.css';
 import './menu-express.css';
@@ -100,13 +100,14 @@ const heroSlides = [
   { eyebrow: 'TU MOMENTO · TU ELECCIÓN', top: 'EL SABOR', bottom: 'SE COMPARTE.', accent: 'A LO B3.', color: 'amber' },
   { eyebrow: 'EXPERIENCIA INTERACTIVA', top: 'MÍRALO.', bottom: 'ELÍGELO.', accent: 'DISFRÚTALO.', color: 'red' },
 ];
-function Intro({ onDone }: { onDone: () => void }) {
+function Intro({ onDone, pilot = false }: { onDone: () => void; pilot?: boolean }) {
   const reduced = useReducedMotion();
   useEffect(() => { if (reduced) { onDone(); return; } const timer = window.setTimeout(onDone, 1900); return () => clearTimeout(timer); }, [onDone, reduced]);
   return <motion.div className="intro-overlay" initial={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: .4 } }} onClick={onDone} role="button" tabIndex={0} onKeyDown={event => { if (event.key === 'Enter') onDone(); }} aria-label="Omitir presentación">
     <div className="intro-ring"><BrandImage className="intro-logo"/></div>
     <div className="intro-name">POLLOS B3</div>
     <div className="intro-subtitle">LA POLLERÍA MÁS VIRAL DE SANTA ANITA</div>
+    {pilot && <div className="b3-pilot-loader" role="status"><span>PREPARANDO TU CARTA...</span><div aria-hidden="true"><i/></div></div>}
     <span className="intro-skip">TOCA PARA CONTINUAR <ArrowRight size={14}/></span>
   </motion.div>;
 }
@@ -300,7 +301,7 @@ export default function Home() {
   const route = useRoute();
   const reducedAnimations = useReducedMotion();
   const { cart, add, setQty, total, count } = usePersistentCart();
-  const [intro, setIntro] = useState(() => { try { return window.location.pathname === '/' && !reduceMotion() && !sessionStorage.getItem('b3-intro-seen'); } catch { return !reduceMotion(); } });
+  const [intro, setIntro] = useState(() => { try { return !reduceMotion() && (B3_CARTA_PILOT || (window.location.pathname === '/' && !sessionStorage.getItem('b3-intro-seen'))); } catch { return !reduceMotion(); } });
   const [openProduct, setOpenProduct] = useState<B3Product | null>(null);
   const [cartOpen, setCartOpen] = useState(false);
   const [locationOpen, setLocationOpen] = useState(false);
@@ -312,11 +313,11 @@ export default function Home() {
   const [cartBounce, setCartBounce] = useState(false);
   const [toast, setToast] = useState('');
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const doneIntro = () => { setIntro(false); try { sessionStorage.setItem('b3-intro-seen','1'); } catch {} };
+  const doneIntro = () => { setIntro(false); if (!B3_CARTA_PILOT) try { sessionStorage.setItem('b3-intro-seen','1'); } catch {} };
   const flyToCart = (productId: string) => {
     if (reduceMotion()) return;
     const source = document.querySelector(`[data-product-id="${productId}"]`) || document.querySelector('.detail-media');
-    const target = document.querySelector('.header-cart') || document.querySelector('.cart-floating-modern');
+    const target = (B3_CARTA_PILOT ? document.querySelector('.b3-ci-cart') : null) || document.querySelector('.header-cart') || document.querySelector('.cart-floating-modern');
     if (!target) return;
     const a = source?.getBoundingClientRect() || {left:innerWidth/2,top:innerHeight/2,width:0,height:0};
     const b = target.getBoundingClientRect();
@@ -337,7 +338,7 @@ export default function Home() {
   const openCart = () => setCartOpen(true);
   useEffect(() => { if(!toastTimer.current)return;return()=>{if(toastTimer.current)clearTimeout(toastTimer.current);}; },[]);
   return <LayoutGroup id="b3-shared-products"><div className={`b3-website${route === '/carta' ? ' b3-website--menu' : ''}`}>
-    <AnimatePresence>{intro&&route==='/'&&<Intro onDone={doneIntro}/>}</AnimatePresence>
+    <AnimatePresence>{intro&&(B3_CARTA_PILOT || route==='/')&&<Intro onDone={doneIntro} pilot={B3_CARTA_PILOT}/>}</AnimatePresence>
     <div className="microstrip"><span>POLLOS B3 · SANTA ANITA</span><span>LA POLLERÍA MÁS VIRAL DE SANTA ANITA <Flame size={13}/></span></div>
     <header className="b3-header"><SiteLink to="/" onClick={onNavigate} aria-label="Pollos B3, inicio"><BrandImage className="header-brand"/></SiteLink>
       <nav className="header-navigation" aria-label="Navegación principal">

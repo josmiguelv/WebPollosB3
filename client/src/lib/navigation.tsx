@@ -4,15 +4,18 @@ import type { AnchorHTMLAttributes, MouseEvent } from 'react';
 /** Client-side navigation keeps the cart, selected delivery mode and chat session mounted.
  * Direct paths are served through the server's SPA fallback (nginx.conf).
  */
+export const B3_CARTA_PILOT = import.meta.env.VITE_B3_CARTA_PILOT !== 'false';
 export const publicRoutes = ['/', '/carta', '/combos', '/promociones', '/locales', '/carrito', '/checkout', '/pedidos', '/mi-cuenta', '/nosotros', '/ayuda'] as const;
 export type PublicRoute = typeof publicRoutes[number];
 const allowed = new Set<string>(publicRoutes);
 export function routeFromPath(path: string): PublicRoute | '/404' {
+  if (B3_CARTA_PILOT) return '/carta';
   const cleaned = path.replace(/\/+$/, '') || '/';
   return allowed.has(cleaned) ? cleaned as PublicRoute : '/404';
 }
 export function navigate(path: PublicRoute) {
   if (typeof window === 'undefined') return;
+  if (B3_CARTA_PILOT) path = '/carta';
   if (window.location.pathname !== path) window.history.pushState({ }, '', path);
   window.dispatchEvent(new Event('b3:navigation'));
   window.scrollTo({ top: 0, behavior: 'instant' });
