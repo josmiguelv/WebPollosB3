@@ -43,3 +43,7 @@ const clip = fs.statSync('client/public/media/b3-giro-demo.mp4');
 const poster = fs.statSync('client/public/media/b3-giro-poster.webp');
 assert.ok(clip.size > 50000 && clip.size < 200000,'Video real optimizado incluido en GitHub');
 assert.ok(poster.size > 1000 && poster.size < 100000,'Poster incluido en GitHub');
+
+// Regression: the Stories component must not reference an undeclared demo variable.
+assert.ok(home.includes('function Stories({ stories, onProduct, demo }'), 'Demo declarado en Historias');
+assert.ok(home.includes('onProduct={openById} demo={demo}/>'), 'Propiedad demo transmitida a Historias');

@@ -161,7 +161,7 @@ function Hero({ onOrder, preview }: { onOrder: () => void; preview: boolean }) {
   </section>;
 }
 
-function Stories({ stories, onProduct }: { stories: B3Story[]; onProduct: (id: string) => void }) {
+function Stories({ stories, onProduct, demo }: { stories: B3Story[]; onProduct: (id: string) => void; demo: boolean }) {
   const [current, setCurrent] = useState<number | null>(null);
   const [progress, setProgress] = useState(0);
   const [seen, setSeen] = useState<string[]>([]);
@@ -370,7 +370,7 @@ export default function Home() {
       {route==='/' && <>
         <Hero onOrder={()=>setLocationOpen(true)} preview={demo}/>
         <div className="marquee-band" aria-label="Experiencia Pollos B3"><div>EL SABOR NOS REÚNE <span>✳</span> HAZLO A TU MANERA <span>✳</span> EL SABOR NOS REÚNE <span>✳</span> HAZLO A TU MANERA <span>✳</span></div></div>
-        <Stories stories={(data?.stories.length?data.stories:editorialStories)} onProduct={openById}/>
+        <Stories stories={(data?.stories.length?data.stories:editorialStories)} onProduct={openById} demo={demo}/>
         <FeaturedIntro products={data?.products||[]} onOpen={openById}/>
         <div className="midpoint-banner"><span>NO ES SOLO ELEGIR.</span><strong>ES VIVIR LA EXPERIENCIA.</strong><BrandGlyph label="B3"/></div>
         <Recommender products={data?.products || []} open={setOpenProduct}/>

@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import assert from 'node:assert/strict';
+import ts from 'typescript';
 const get = path => fs.readFileSync(new URL(path, import.meta.url),'utf8');
 const home = get('../client/src/pages/Home.tsx');
 const media = get('../client/src/features/menu/SpinCanvas.tsx');
@@ -61,8 +62,8 @@ assert.ok(home.includes("route==='/locales'&& <><CommercialHero"),'Locales intac
 assert.ok(home.includes("route==='/combos'&& <><CommercialHero"),'Combos intacto');
 console.log('Carta inmersiva Pollos B3 / v1.2.0: PASS.');
 
-\n// Regression: JSX syntax must be parsed before deployment; text-pattern tests alone are insufficient.
-import ts from 'typescript';
+
+// Regression: JSX syntax must be parsed before deployment; text-pattern tests alone are insufficient.
 for (const name of ['Home.tsx','CartaInmersiva.tsx','CartaCompra.tsx','VideoGiroDemo.tsx']) {
   const path = new URL('../client/src/pages/' + name, import.meta.url);
   const source = ts.createSourceFile(name, fs.readFileSync(path, 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
@@ -70,3 +71,7 @@ for (const name of ['Home.tsx','CartaInmersiva.tsx','CartaCompra.tsx','VideoGiro
     name + ' contiene un error de sintaxis JSX: ' + source.parseDiagnostics.map(d => ts.flattenDiagnosticMessageText(d.messageText, ' ')).join('; '));
   console.log('PASS sintaxis TSX:',name);
 }
+
+// Regression: the demo flag must be passed explicitly into Stories.
+assert.ok(home.includes('function Stories({ stories, onProduct, demo }'), 'Historias reciben demo');
+assert.ok(home.includes('onProduct={openById} demo={demo}/>'), 'Home pasa la señal de demostración');
