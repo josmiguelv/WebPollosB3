@@ -16,7 +16,7 @@ for(const [name,source,token] of [
  ['Color de marca',styles,'#FE1601'],
  ['Ancho móvil centrado',styles,'max-width:656px'],
  ['Datos oficiales desde adaptador',catalog,'loadPublicCatalog'],
- ['FLIP',carta,'layoutId: 'b3-image-' + product.id'],
+ ['FLIP',carta,"layoutId: 'b3-image-' + product.id"],
  ['Modal de personalización',home,'<ProductDetail'],
  ['Giro Canvas',home,'<SpinCanvas'],
  ['Historias',home,'4500'],
@@ -54,6 +54,20 @@ assert.ok(styles.includes('.b3-ci-flip-inner.is-flipped'), 'Transformacion CSS 3
 assert.ok(carta.includes('const mainButton ='), 'Comprar con ficha original');
 
 const previewVideo = fs.readFileSync('client/src/pages/VideoGiroDemo.tsx','utf8');
-assert.ok(previewVideo.includes('b3-medio-pollo-giro.mp4'), 'Video nuevo disponible tras copiar los recursos');
+assert.ok(previewVideo.includes('b3-medio-pollo-giro.mp4'), 'Video nuevo incluido en GitHub');
 assert.ok(previewVideo.includes('b3-giro-demo.mp4'), 'Video existente como respaldo');
 assert.ok(previewVideo.includes('setUseExistingClip(true)'), 'Fallback automatico cuando falta video nuevo');
+
+
+// Control de correspondencia catálogo-fotografías: todas deben estar publicadas en public/menu.
+const menuMap = [...catalog.matchAll(/photo: '([^']+)'/g)].map(match => match[1]);
+assert.equal(menuMap.length, 14, 'La demo debe tener exactamente 14 artículos visuales');
+for (const name of menuMap) {
+  const photo = fs.statSync('client/public/menu/' + name + '.webp');
+  assert.ok(photo.size > 4000, 'Foto requerida y optimizada: ' + name);
+}
+const medioVideo = fs.statSync('client/public/media/b3-medio-pollo-giro.mp4');
+const medioPoster = fs.statSync('client/public/media/b3-medio-pollo-poster.webp');
+assert.ok(medioVideo.size > 50000 && medioVideo.size < 300000, 'Video nuevo real, optimizado y versionado');
+assert.ok(medioPoster.size > 5000, 'Poster del video nuevo versionado');
+console.log('14 imágenes y video publicados en GitHub: PASS.');
