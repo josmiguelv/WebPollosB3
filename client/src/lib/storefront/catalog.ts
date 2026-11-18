@@ -76,29 +76,44 @@ const illustrative = [
   { id: 'favoritos', label: 'Vuelve por tus favoritos', tone: 'charcoal' },
 ];
 
-/** DEV ONLY: isolated specimens used for design and interaction testing.
- * Nothing in this fixture is an approved B3 menu, price, offer or location. */
+/** Catálogo DEMOSTRATIVO armado con los 14 platos que facilitó el usuario.
+ * Fotografías proporcionadas y precios referenciales, no oficiales.
+ * Al conectar el catálogo público autorizado, esta demo se reemplaza. */
+type B3DemoEntry = { id: string; name: string; kind: 'pollo' | 'combo' | 'bebida'; photo: string; price: number; featured?: boolean };
+const b3DemoMenu: B3DemoEntry[] = [
+  { id: 'pollo-cuarto-papas', name: "1/4 de pollo + papas + cremas", kind: 'pollo', photo: 'cuarto-papas-cremas', price: 24.90 },
+  { id: 'pollo-cuarto-ensalada', name: "1/4 de pollo + papas + ensalada + cremas", kind: 'pollo', photo: 'cuarto-papas-ensalada-cremas', price: 27.90 },
+  { id: 'pollo-medio-papas', name: "1/2 de pollo + papas + cremas", kind: 'pollo', photo: 'medio-papas-cremas', price: 42.90 },
+  { id: 'pollo-medio-ensalada', name: "1/2 de pollo + papas + ensalada + cremas", kind: 'pollo', photo: 'medio-papas-ensalada-cremas', price: 46.90 },
+  { id: 'pollo-entero-papas', name: "1 pollo + papas + cremas", kind: 'pollo', photo: 'entero-papas-cremas', price: 79.90 },
+  { id: 'pollo-entero-ensalada', name: "1 pollo + papas + ensalada + cremas", kind: 'pollo', photo: 'entero-papas-ensalada-cremas', price: 86.90, featured: true },
+  { id: 'combo-entero-pepsi15', name: "1 pollo + papas + ensalada + cremas + Pepsi 1.5 L", kind: 'combo', photo: 'combo-entero-pepsi15', price: 95.90 },
+  { id: 'combo-cuarto-jumbo', name: "1/4 de pollo + papas + ensalada + cremas + Pepsi Jumbo", kind: 'combo', photo: 'combo-cuarto-pepsi-jumbo', price: 31.90 },
+  { id: 'combo-medio-jumbo', name: "1/2 de pollo + papas + ensalada + cremas + Pepsi Jumbo", kind: 'combo', photo: 'combo-medio-pepsi-jumbo', price: 50.90 },
+  { id: 'combo-entero-cuarto', name: "1 pollo + 1/4 de pollo + papas + ensalada + cremas + Pepsi 1.5 L", kind: 'combo', photo: 'combo-entero-cuarto-pepsi15', price: 118.90 },
+  { id: 'combo-entero-medio', name: "1 pollo + 1/2 de pollo + papas + ensalada + cremas + Pepsi 1.5 L", kind: 'combo', photo: 'combo-entero-medio-pepsi15', price: 136.90 },
+  { id: 'pepsi-335', name: "Pepsi 335 ml", kind: 'bebida', photo: 'pepsi-335', price: 4.50 },
+  { id: 'pepsi-jumbo', name: "Pepsi Jumbo (750 ml)", kind: 'bebida', photo: 'pepsi-jumbo-750', price: 6.50 },
+  { id: 'pepsi-1500', name: "Pepsi 1.5 L", kind: 'bebida', photo: 'pepsi-1500', price: 9.50 },
+];
 export const designFixtures: B3Catalog = {
   categories: [
-    { id: 'pollo', name: 'Pollos a la brasa' },
+    { id: 'pollo', name: 'Menú' },
     { id: 'combo', name: 'Combos' },
     { id: 'bebida', name: 'Bebidas' },
-    { id: 'postre', name: 'Postres' },
   ],
-  products: [
-    { id: 'demo-brasa', imageUrl: referenceMedia.brasa.url, name: 'Pollo a la brasa', description: 'Ficha demostrativa para probar el diseño. Contenido y precios no oficiales.', categoryId: 'pollo', kind: 'pollo', featured: true, available: true,
-      variants: [{ id: 'cuarto', label: '1/4 de pollo', price: 24.90 }, { id: 'medio', label: '1/2 pollo', price: 41.90 }, { id: 'entero', label: 'Pollo entero', price: 79.90 }],
-      sauces: ['Ají', 'Mayonesa', 'Huacatay', 'Rocoto', 'Ketchup'].map((label, id) => ({ id: `s${id}`, label, price: 0 })), sauceLimit: 3,
-      extras: [{ id: 'papas', label: 'Papas adicionales', price: 6 }, { id: 'ensalada', label: 'Ensalada', price: 5 }] },
-    { id: 'demo-combo', imageUrl: referenceMedia.combo.url, name: 'Combo para compartir', description: 'Ejemplo de composición visual; no es una promoción publicada.', categoryId: 'combo', kind: 'combo', available: true,
-      variants: [{ id: 'unico', label: 'Para compartir', price: 58.90 }] },
-    { id: 'demo-parrilla', imageUrl: referenceMedia.parrilla.url, name: 'Opción a la parrilla', description: 'Producto de prueba. La carta real llegará desde administración.', categoryId: 'pollo', kind: 'otro', available: true,
-      variants: [{ id: 'individual', label: 'Personal', price: 22.00 }] },
-    { id: 'demo-bebida', imageUrl: referenceMedia.bebida.url, name: 'Bebida para acompañar', description: 'Producto de muestra sin disponibilidad comercial real.', categoryId: 'bebida', kind: 'bebida', available: true,
-      variants: [{ id: 'vaso', label: 'Vaso', price: 7.00 }, { id: 'jarra', label: 'Jarra', price: 14.00 }] },
-    { id: 'demo-postre', imageUrl: referenceMedia.postre.url, name: 'Un toque dulce', description: 'Concepto demostrativo. No representa la carta oficial.', categoryId: 'postre', kind: 'postre', available: true,
-      variants: [{ id: 'personal', label: 'Porción', price: 12.00 }] },
-  ],
+  products: b3DemoMenu.map(entry => ({
+    id: 'demo-' + entry.id,
+    name: entry.name,
+    kind: entry.kind,
+    categoryId: entry.kind,
+    imageUrl: '/menu/' + entry.photo + '.webp',
+    description: entry.kind === 'bebida' ? entry.name + '. Precio referencial.'
+      : 'Incluye ' + entry.name.replaceAll(' + ', ', ') + '. Precio referencial.',
+    available: true,
+    featured: Boolean(entry.featured),
+    variants: [{ id: 'presentacion', label: 'Presentación indicada', price: entry.price }],
+  })),
   stories: illustrative.map((item) => ({ id: item.id, title: item.label, subtitle: 'Fotografía referencial para explorar la experiencia; no es un producto oficial.', tone: item.tone, imageUrl: ({plato:referenceMedia.brasa.url,brasa:referenceMedia.fuego.url,compartir:referenceMedia.combo.url,bebida:referenceMedia.bebida.url,favoritos:referenceMedia.postre.url} as Record<string,string>)[item.id] })),
   stores: [],
   comboDiscounts: {},
