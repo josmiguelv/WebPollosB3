@@ -195,7 +195,7 @@
 /* Una tarjeta por fila; solo gira el área de foto, sin tocar la estructura. */
 .b3-website--menu .b3-ci-flip-photo{position:relative;perspective:1000px;overflow:visible}
 .b3-website--menu .b3-ci-flip-photo.b3-ci-lead-photo-button{aspect-ratio:1.32}
-.b3-website--menu .b3-ci-flip-inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .62s cubic-bezier(.2,.75,.2,1)}
+.b3-website--menu .b3-ci-flip-inner{position:absolute;inset:0;border-radius:inherit;transform-style:preserve-3d;transition:transform .62s cubic-bezier(.2,.75,.2,1)}
 .b3-website--menu .b3-ci-flip-inner.is-flipped{transform:rotateY(180deg)}
 .b3-website--menu .b3-ci-flip-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:inherit;overflow:hidden}
 .b3-website--menu .b3-ci-flip-front{background:#111}
@@ -221,3 +221,8 @@
  .b3-website--menu .b3-ci-reel-photo .b3-ci-flip-parts>span{font-size:9px;padding:3px 5px}
 }
 @media(prefers-reduced-motion:reduce){.b3-website--menu .b3-ci-flip-inner{transition:none}}
+
+/* Fotografía suministrada por Pollos B3: encuadre adecuado sin cambiar tarjetas. */
+.b3-website--menu .b3-ci-photo>img[src^="/menu/"]{object-position:center 68%}
+.b3-website--menu .b3-ci-photo>img[src^="/menu/combo-"]{object-position:center 50%}
+.b3-website--menu .b3-ci-photo>img[src^="/menu/pepsi-"]{object-fit:contain;object-position:center;background:#111}
