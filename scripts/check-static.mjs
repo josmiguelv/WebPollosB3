@@ -60,3 +60,13 @@ assert.ok(ciCss.includes('max-width:656px')&&ciCss.includes('.b3-website--menu')
 assert.ok(home.includes("route==='/locales'&& <><CommercialHero"),'Locales intacto');
 assert.ok(home.includes("route==='/combos'&& <><CommercialHero"),'Combos intacto');
 console.log('Carta inmersiva Pollos B3 / v1.2.0: PASS.');
+
+\n// Regression: JSX syntax must be parsed before deployment; text-pattern tests alone are insufficient.
+import ts from 'typescript';
+for (const name of ['Home.tsx','CartaInmersiva.tsx','CartaCompra.tsx','VideoGiroDemo.tsx']) {
+  const path = new URL('../client/src/pages/' + name, import.meta.url);
+  const source = ts.createSourceFile(name, fs.readFileSync(path, 'utf8'), ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+  assert.equal(source.parseDiagnostics.length, 0,
+    name + ' contiene un error de sintaxis JSX: ' + source.parseDiagnostics.map(d => ts.flattenDiagnosticMessageText(d.messageText, ' ')).join('; '));
+  console.log('PASS sintaxis TSX:',name);
+}

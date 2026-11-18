@@ -124,7 +124,7 @@ function Intro({ onDone, pilot = false }: { onDone: () => void; pilot?: boolean 
     <div className="intro-ring"><BrandImage className="intro-logo"/></div>
     <div className="intro-subtitle">LA POLLERÍA MÁS VIRAL DE SANTA ANITA</div>
     {pilot && <div className="b3-pilot-loader" role="status" aria-label="Cargando carta de Pollos B3"><span>PREPARANDO TU CARTA...</span><div aria-hidden="true"><i style={{ animationDuration: CARTA_SPLASH_PROGRESS_MS + 'ms' }}/></div></div>}
-    {!pilot && <span className="intro-skip">TOCA PARA CONTINUAR <ArrowRight size={14}/></span>
+    {!pilot && <span className="intro-skip">TOCA PARA CONTINUAR <ArrowRight size={14}/></span>}
   </motion.div>;
 }
 function Hero({ onOrder, preview }: { onOrder: () => void; preview: boolean }) {
