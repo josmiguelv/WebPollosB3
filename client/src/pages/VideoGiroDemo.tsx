@@ -13,6 +13,7 @@ export function VideoGiroDemo({ fallbackImage }: { fallbackImage?: string }) {
   const [intent, setIntent] = useState<'auto' | 'paused' | 'playing'>('auto');
   const [playing, setPlaying] = useState(false);
   const [mediaError, setMediaError] = useState(false);
+  const [useExistingClip, setUseExistingClip] = useState(false);
   const reduced = useReducedMotion();
 
   useEffect(() => {
@@ -41,7 +42,7 @@ export function VideoGiroDemo({ fallbackImage }: { fallbackImage?: string }) {
       if (active) setPlaying(false);
     });
     return () => { active = false; };
-  }, [inView, intent, reduced, mediaError]);
+  }, [inView, intent, reduced, mediaError, useExistingClip]);
 
   const toggle = () => setIntent(playing ? 'paused' : 'playing');
 
@@ -49,18 +50,18 @@ export function VideoGiroDemo({ fallbackImage }: { fallbackImage?: string }) {
     <div className="b3-ci-motion-head">
       <span><Clapperboard size={17} aria-hidden="true"/> PRESENTACIÓN EN MOVIMIENTO</span>
       <h2>El antojo también se mueve.</h2>
-      <p>Así podemos mostrar un plato girando antes de que el cliente lo elija.</p>
+      <p>{useExistingClip ? 'Ejemplo de plato en movimiento.' : 'Video de 1/2 pollo a la brasa girando, para apreciar el plato.'}</p>
     </div>
     <div className="b3-ci-motion-stage">
       {!mediaError ? <video
         ref={videoRef}
         className="b3-ci-motion-video"
-        src="/media/b3-giro-demo.mp4"
-        poster="/media/b3-giro-poster.webp"
+        src={useExistingClip ? '/media/b3-giro-demo.mp4' : '/media/b3-medio-pollo-giro.mp4'}
+        poster={useExistingClip ? '/media/b3-giro-poster.webp' : '/media/b3-medio-pollo-poster.webp'}
         loop muted playsInline preload="metadata"
         disablePictureInPicture
         aria-label="Video de muestra: pollo a la brasa con papas y ensalada rotando en una plataforma"
-        onError={() => { setMediaError(true); setPlaying(false); }}
+        onError={() => { setPlaying(false); if (!useExistingClip) setUseExistingClip(true); else setMediaError(true); }}
       /> : fallbackImage ? <img className="b3-ci-motion-fallback" src={fallbackImage} alt="Referencia visual de comida a la brasa" loading="lazy"/> :
         <div className="b3-ci-motion-unavailable"><Clapperboard size={38}/><span>No se pudo cargar el video de demostración</span></div>}
       <span className="b3-ci-motion-watermark">VIDEO REFERENCIAL · NO ES PLATO OFICIAL B3</span>

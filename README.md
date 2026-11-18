@@ -119,3 +119,9 @@ En modo piloto, la pantalla de carga completa dura **3 segundos**: barra lineal 
 
 ## Video visible de Carta (v1.2.4)
 Se corrigió la ausencia del video: los recursos binarios **ya están versionados en GitHub**, en `client/public/media/b3-giro-demo.mp4` y `client/public/media/b3-giro-poster.webp`. No es necesario descargar ni descomprimir ningún ZIP. El video se presenta automáticamente en modo piloto (`VITE_B3_CARTA_PILOT=true`), incluso si no se habilitan los productos de diseño (`VITE_B3_ENABLE_DESIGN_PREVIEW=false`). En la parte superior de Carta se añadió el acceso **«VER EL PLATO EN MOVIMIENTO»** que lleva al bloque del video, justo después del producto destacado. El video está identificado como material referencial y no como plato oficial. En el sitio multipágina final, con `VITE_B3_CARTA_PILOT=false`, la demostración se oculta.
+
+## Catálogo de prueba B3 y video — v1.2.5
+
+Sin rediseñar la web, el fixture de la Carta contiene 14 artículos: 6 platos, 5 combos y 3 bebidas, con precios de demostración en soles. Cada artículo tiene asignado un nombre de fotografía suministrada por el usuario. La Carta conserva una tarjeta por fila y el botón de compra; al tocar la fotografía, gira y muestra su contenido (la segunda pulsación la devuelve a su posición). La animación FLIP hacia la ficha de producto y el carrito permanecen.
+
+Los recursos visuales optimizados se entregan en `PollosB3_Carta_Imagenes_v1.2.5.zip` para copiarlos a `client/public/menu/` y `client/public/media/`; no están incluidos en este commit. Para futuras actualizaciones mediante `git pull`, deben publicarse también estos recursos binarios en el repositorio. El video nuevo de medio pollo ocupa el bloque audiovisual ya existente; mientras no esté instalado, se reproduce el video anterior de respaldo sin error. No se modifican las API ni la compra real.

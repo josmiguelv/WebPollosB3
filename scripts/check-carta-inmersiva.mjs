@@ -52,3 +52,8 @@ assert.ok(carta.includes('function FlipDishPhoto('), 'Imagen giratoria integrada
 assert.ok(carta.includes('setFlipped(previous => !previous)'), 'El giro es reversible');
 assert.ok(styles.includes('.b3-ci-flip-inner.is-flipped'), 'Transformacion CSS 3D');
 assert.ok(carta.includes('const mainButton ='), 'Comprar con ficha original');
+
+const previewVideo = fs.readFileSync('client/src/pages/VideoGiroDemo.tsx','utf8');
+assert.ok(previewVideo.includes('b3-medio-pollo-giro.mp4'), 'Video nuevo disponible tras copiar los recursos');
+assert.ok(previewVideo.includes('b3-giro-demo.mp4'), 'Video existente como respaldo');
+assert.ok(previewVideo.includes('setUseExistingClip(true)'), 'Fallback automatico cuando falta video nuevo');
