@@ -100,15 +100,31 @@ const heroSlides = [
   { eyebrow: 'TU MOMENTO · TU ELECCIÓN', top: 'EL SABOR', bottom: 'SE COMPARTE.', accent: 'A LO B3.', color: 'amber' },
   { eyebrow: 'EXPERIENCIA INTERACTIVA', top: 'MÍRALO.', bottom: 'ELÍGELO.', accent: 'DISFRÚTALO.', color: 'red' },
 ];
+// En Carta piloto: barra 2,75 s + salida de 0,25 s = 3,00 s totales.
+const CARTA_SPLASH_TOTAL_MS = 3000;
+const CARTA_SPLASH_EXIT_MS = 250;
+const CARTA_SPLASH_PROGRESS_MS = CARTA_SPLASH_TOTAL_MS - CARTA_SPLASH_EXIT_MS;
+const STANDARD_INTRO_MS = 1900;
 function Intro({ onDone, pilot = false }: { onDone: () => void; pilot?: boolean }) {
   const reduced = useReducedMotion();
-  useEffect(() => { if (reduced) { onDone(); return; } const timer = window.setTimeout(onDone, 1900); return () => clearTimeout(timer); }, [onDone, reduced]);
-  return <motion.div className="intro-overlay" initial={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: .4 } }} onClick={onDone} role="button" tabIndex={0} onKeyDown={event => { if (event.key === 'Enter') onDone(); }} aria-label="Omitir presentación">
+  // No reiniciar el temporizador de la intro cuando el componente padre renderiza.
+  const onDoneRef = useRef(onDone);
+  onDoneRef.current = onDone;
+  useEffect(() => {
+    if (reduced) { onDoneRef.current(); return; }
+    const timer = window.setTimeout(() => onDoneRef.current(), pilot ? CARTA_SPLASH_PROGRESS_MS : STANDARD_INTRO_MS);
+    return () => window.clearTimeout(timer);
+  }, [pilot, reduced]);
+  return <motion.div className="intro-overlay" initial={{ opacity: 1 }} exit={{ opacity: 0, transition: { duration: pilot ? CARTA_SPLASH_EXIT_MS / 1000 : .4 } }}
+    onClick={pilot ? undefined : onDone}
+    role={pilot ? undefined : 'button'}
+    tabIndex={pilot ? undefined : 0}
+    onKeyDown={pilot ? undefined : event => { if (event.key === 'Enter') onDone(); }}
+    aria-label={pilot ? 'Preparando la carta de Pollos B3' : 'Omitir presentación'}>
     <div className="intro-ring"><BrandImage className="intro-logo"/></div>
-    <div className="intro-name">POLLOS B3</div>
     <div className="intro-subtitle">LA POLLERÍA MÁS VIRAL DE SANTA ANITA</div>
-    {pilot && <div className="b3-pilot-loader" role="status"><span>PREPARANDO TU CARTA...</span><div aria-hidden="true"><i/></div></div>}
-    <span className="intro-skip">TOCA PARA CONTINUAR <ArrowRight size={14}/></span>
+    {pilot && <div className="b3-pilot-loader" role="status" aria-label="Cargando carta de Pollos B3"><span>PREPARANDO TU CARTA...</span><div aria-hidden="true"><i style={{ animationDuration: CARTA_SPLASH_PROGRESS_MS + 'ms' }}/></div></div>}
+    {!pilot && <span className="intro-skip">TOCA PARA CONTINUAR <ArrowRight size={14}/></span>
   </motion.div>;
 }
 function Hero({ onOrder, preview }: { onOrder: () => void; preview: boolean }) {

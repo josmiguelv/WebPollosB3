@@ -8,7 +8,8 @@ const data = get('../client/src/lib/storefront/catalog.ts');
 const html = get('../client/index.html');
 for (const [feature, text, token] of [
  ['marca',html,'Pollos B3'],
- ['intro 1,9s',home,'1900'],
+ ['intro fuera del piloto 1,9s',home,'STANDARD_INTRO_MS = 1900'],
+ ['intro piloto total 3s',home,'CARTA_SPLASH_TOTAL_MS = 3000'],
  ['historias 4,5s',home,'4500'],
  ['fichas compartidas',home,'layoutId'],
  ['giro por cuadros',media,'requestAnimationFrame'],

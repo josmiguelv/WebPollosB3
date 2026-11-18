@@ -98,7 +98,7 @@ export function CartaInmersiva({ data, demo, error, onOpen, cart, total, setQty,
   return <div className={`b3-ci-shell ${largeText ? 'b3-ci-large-text' : ''} ${lightTheme ? 'b3-ci-light' : ''}`}>
     {purchaseOpen ? <CartaCompra cart={cart} total={total} data={data} delivery={delivery} demo={demo} setQty={setQty} setDelivery={setDelivery} onClose={()=>{setPurchaseOpen(false);window.scrollTo({top:0,behavior:'instant'});}}/> : <>
     <header className="b3-ci-header">
-      <SiteLink className="b3-ci-brand" to="/" aria-label="Ir al inicio de Pollos B3"><img src="/brand/pollos-b3-logo.png" alt="Pollos B3"/><span>Pollos B3</span></SiteLink>
+      <SiteLink className="b3-ci-brand" to={B3_CARTA_PILOT ? '/carta' : '/'} aria-label={B3_CARTA_PILOT ? 'Pollos B3, carta' : 'Ir al inicio de Pollos B3'}><img src="/brand/pollos-b3-logo.png" alt="Pollos B3"/></SiteLink>
       <div className="b3-ci-tools">
         <button aria-label={searchOpen ? 'Cerrar buscador' : 'Buscar plato'} aria-expanded={searchOpen} title="Buscar" onClick={() => setSearchOpen(open => !open)}><Search size={21}/></button>
         <button aria-label={largeText ? 'Usar texto normal' : 'Aumentar texto'} aria-pressed={largeText} title="Tamaño de letra" onClick={() => setLargeText(old => !old)}><Type size={23}/></button>
