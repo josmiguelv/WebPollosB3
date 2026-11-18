@@ -226,3 +226,61 @@
 .b3-website--menu .b3-ci-photo>img[src^="/menu/"]{object-position:center 68%}
 .b3-website--menu .b3-ci-photo>img[src^="/menu/combo-"]{object-position:center 50%}
 .b3-website--menu .b3-ci-photo>img[src^="/menu/pepsi-"]{object-fit:contain;object-position:center;background:#111}
+
+
+/* Carta B3 — Ajustes puntuales: fotos completas, reverso editorial, categorías sin saltos. */
+.b3-website--menu .b3-ci-photo{background:#111;isolation:isolate}
+.b3-website--menu .b3-ci-photo>img[src^="/menu/"],
+.b3-website--menu .b3-ci-photo>img[src^="/menu/combo-"],
+.b3-website--menu .b3-ci-photo>img[src^="/menu/pepsi-"]{
+  object-fit:contain;
+  object-position:center center;
+  transform:scale(.94);
+}
+.b3-website--menu .b3-ci-lead-photo-button:hover .b3-ci-photo>img[src^="/menu/"],
+.b3-website--menu .b3-ci-dish-photo:hover .b3-ci-photo>img[src^="/menu/"],
+.b3-website--menu .b3-ci-reel-photo:hover .b3-ci-photo>img[src^="/menu/"]{
+  transform:scale(.97);
+}
+.b3-website--menu .b3-ci-flip-back{gap:12px;justify-content:space-between;padding:clamp(15px,3.7vw,25px)}
+.b3-website--menu .b3-ci-flip-back-heading{display:flex;flex-direction:column;gap:7px;flex:none;max-width:100%}
+.b3-website--menu .b3-ci-flip-back-heading>strong{display:block;color:#fff;font:800 clamp(19px,4.4vw,28px)/1.13 Montserrat,sans-serif;letter-spacing:-.055em}
+.b3-website--menu .b3-ci-flip-back-heading p{color:#d0c6c1;font:500 clamp(11px,2.7vw,14px)/1.55 'DM Sans',sans-serif;margin:0;max-width:490px}
+.b3-website--menu .b3-ci-flip-includes{display:flex;flex-direction:column;gap:9px;min-height:0;flex:1}
+.b3-website--menu .b3-ci-flip-includes>span{color:#ff947b;font:800 9px 'DM Sans',sans-serif;letter-spacing:.105em}
+.b3-website--menu .b3-ci-flip-parts{align-content:flex-start;overflow-y:auto;overscroll-behavior:contain;padding-right:2px}
+.b3-website--menu .b3-ci-flip-parts>span{font-weight:650;background:#ffffff0d;border:1px solid #ffffff23;border-radius:10px;padding:8px 10px}
+.b3-website--menu .b3-ci-flip-bottom{width:100%;border-top:1px solid #ffffff21;padding-top:10px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex:none}
+.b3-website--menu .b3-ci-flip-bottom>span{font:800 12px 'DM Sans',sans-serif;color:#ff9d85}
+.b3-website--menu .b3-ci-flip-bottom>small{font:750 9px 'DM Sans',sans-serif;color:#c6b5aa;text-align:right}
+.b3-website--menu .b3-ci-chips button,
+.b3-website--menu .b3-ci-all-categories,
+.b3-website--menu .b3-ci-sheet-category{
+  cursor:pointer;touch-action:manipulation;
+}
+.b3-website--menu .b3-ci-chips button:focus-visible,
+.b3-website--menu .b3-ci-all-categories:focus-visible,
+.b3-website--menu .b3-ci-flip-photo:focus-visible,
+.b3-website--menu .b3-ci-sheet-category:focus-visible{
+  outline:3px solid var(--ci-accent);outline-offset:2px;
+}
+@media(max-width:680px){
+ .b3-website--menu .b3-ci-flip-back{gap:8px;padding:14px}
+ .b3-website--menu .b3-ci-flip-back-heading{gap:5px}
+ .b3-website--menu .b3-ci-flip-back-heading>strong{font-size:clamp(16px,4.7vw,22px)}
+ .b3-website--menu .b3-ci-flip-back-heading p{font-size:11px;line-height:1.4}
+ .b3-website--menu .b3-ci-flip-includes{gap:6px}
+ .b3-website--menu .b3-ci-flip-includes>span{font-size:8px}
+ .b3-website--menu .b3-ci-flip-parts>span{font-size:10px;padding:6px 8px}
+ .b3-website--menu .b3-ci-flip-bottom{padding-top:7px}
+ .b3-website--menu .b3-ci-flip-bottom>span{font-size:10px}
+ .b3-website--menu .b3-ci-flip-bottom>small{font-size:8px}
+ .b3-website--menu .b3-ci-reel-photo .b3-ci-flip-back{padding:8px;gap:4px}
+ .b3-website--menu .b3-ci-reel-photo .b3-ci-flip-back-heading>strong{font-size:12px}
+ .b3-website--menu .b3-ci-reel-photo .b3-ci-flip-back-heading p{display:none}
+ .b3-website--menu .b3-ci-reel-photo .b3-ci-flip-kicker{font-size:7px}
+ .b3-website--menu .b3-ci-reel-photo .b3-ci-flip-includes>span{display:none}
+ .b3-website--menu .b3-ci-reel-photo .b3-ci-flip-parts>span{font-size:8px;padding:3px 5px}
+ .b3-website--menu .b3-ci-reel-photo .b3-ci-flip-bottom>span{font-size:8px}
+ .b3-website--menu .b3-ci-reel-photo .b3-ci-flip-bottom>small{display:none}
+}

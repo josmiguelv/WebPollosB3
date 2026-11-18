@@ -43,6 +43,14 @@ function DishPhoto({ product, priority = false, label = false }: { product: B3Pr
 function FlipDishPhoto({ product, kind = 'dish', priority = false }: { product: B3Product; kind?: 'dish'|'lead'|'reel'; priority?: boolean }) {
   const [flipped, setFlipped] = useState(false);
   const included = product.name.split(/\s+\+\s+/).filter(Boolean);
+  const isReference = product.id.startsWith('demo-');
+  const summary = product.kind === 'combo'
+    ? 'Una combinación de pollo a la brasa, acompañamientos y bebida, ideal para compartir.'
+    : product.kind === 'bebida'
+      ? 'La bebida que acompaña tu elección, en su presentación indicada.'
+      : 'Pollo a la brasa acompañado con todo lo que incluye esta presentación.';
+  const backTitle = product.kind === 'combo' ? 'Tu combo, al detalle'
+    : product.kind === 'bebida' ? 'Tu bebida' : 'Tu plato, al detalle';
   const base = kind === 'lead' ? 'b3-ci-lead-photo-button' : kind === 'reel' ? 'b3-ci-reel-photo' : 'b3-ci-dish-photo';
   const price = minPrice(product);
   const layoutProps = kind === 'dish' ? { layoutId: 'b3-image-' + product.id, transition: { type: 'tween' as const, duration: .48 } } : {};
@@ -56,13 +64,21 @@ function FlipDishPhoto({ product, kind = 'dish', priority = false }: { product: 
         {kind !== 'dish' && <span className={kind === 'lead' ? 'b3-ci-price-pill' : 'b3-ci-small-price'}>{price === null ? 'Consultar' : soles(price)}</span>}
       </div>
       <div className="b3-ci-flip-face b3-ci-flip-back">
-        <span className="b3-ci-flip-kicker">¿QUÉ INCLUYE?</span>
-        <strong>{product.name}</strong>
-        <div className="b3-ci-flip-parts">
-          {included.length > 1 ? included.map((item,i) => <span key={i}><Check size={14} aria-hidden="true"/>{item}</span>)
-            : <span><Check size={14} aria-hidden="true"/>{product.description}</span>}
+        <div className="b3-ci-flip-back-heading">
+          <span className="b3-ci-flip-kicker">UNA MIRADA A TU ELECCIÓN</span>
+          <strong>{backTitle}</strong>
+          <p>{summary}</p>
         </div>
-        <small>↶ TOCA PARA VOLVER</small>
+        <div className="b3-ci-flip-includes">
+          <span>ESTA PRESENTACIÓN INCLUYE</span>
+          <div className="b3-ci-flip-parts">
+            {included.map((item,i) => <span key={i}><Check size={14} aria-hidden="true"/>{item}</span>)}
+          </div>
+        </div>
+        <div className="b3-ci-flip-bottom">
+          <span>{price === null ? 'Precio por confirmar' : (isReference ? 'PRECIO REFERENCIAL · ' : '') + soles(price)}</span>
+          <small>↶ TOCA PARA VOLVER</small>
+        </div>
       </div>
     </div>
   </motion.button>;
@@ -80,6 +96,8 @@ export function CartaInmersiva({ data, demo, error, onOpen, cart, total, setQty,
   const [showTop, setShowTop] = useState(false);
   const searchInput = useRef<HTMLInputElement>(null);
   const chipRail = useRef<HTMLDivElement>(null);
+  const isCategoryJumping = useRef(false);
+  const categoryJumpTimer = useRef<number | null>(null);
   const reduced = useReducedMotion();
   const products = data?.products ?? [];
   const categories = data?.categories ?? [];
@@ -91,6 +109,9 @@ export function CartaInmersiva({ data, demo, error, onOpen, cart, total, setQty,
   const productCount = matching.length;
 
   useEffect(() => { if (searchOpen) searchInput.current?.focus(); }, [searchOpen]);
+  useEffect(() => () => {
+    if (categoryJumpTimer.current !== null) window.clearTimeout(categoryJumpTimer.current);
+  }, []);
   useEffect(() => {
     if (!categorySheet) return;
     const previous = document.body.style.overflow;
@@ -110,16 +131,40 @@ export function CartaInmersiva({ data, demo, error, onOpen, cart, total, setQty,
     if (!elements.length || !('IntersectionObserver' in window)) return;
     const observer = new IntersectionObserver(entries => {
       const current = entries.filter(item => item.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
-      if (current) setActiveCategory((current.target as HTMLElement).dataset.b3CiCategory ?? '');
+      if (current && !isCategoryJumping.current) setActiveCategory((current.target as HTMLElement).dataset.b3CiCategory ?? '');
     }, { rootMargin: '-136px 0px -60% 0px', threshold: 0 });
     elements.forEach(element => observer.observe(element));
     return () => observer.disconnect();
   }, [data, query]);
   const moveTo = (id: string) => {
+    const wasSheetOpen = categorySheet;
     setCategorySheet(false);
     setActiveCategory(id);
-    document.getElementById(`b3-ci-cat-${id}`)?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
-    chipRail.current?.querySelector<HTMLElement>(`[data-chip="${CSS.escape(id)}"]`)?.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'nearest', inline: 'center' });
+    isCategoryJumping.current = true;
+    if (categoryJumpTimer.current !== null) window.clearTimeout(categoryJumpTimer.current);
+    const scrollOnlyTheCorrectAxes = () => {
+      const section = document.getElementById('b3-ci-cat-' + id);
+      const headerHeight = document.querySelector<HTMLElement>('.b3-ci-header')?.offsetHeight ?? 79;
+      const barHeight = document.querySelector<HTMLElement>('.b3-ci-sticky-categories')?.offsetHeight ?? 68;
+      if (section) {
+        const top = Math.max(0, window.scrollY + section.getBoundingClientRect().top - headerHeight - barHeight - 12);
+        window.scrollTo({ top, behavior: reduced ? 'instant' : 'smooth' });
+      }
+      // A chip's scrollIntoView also scrolls the document vertically: never use it here.
+      const rail = chipRail.current;
+      const chip = Array.from(rail?.querySelectorAll<HTMLButtonElement>('[data-chip]') ?? [])
+        .find(button => button.dataset.chip === id);
+      if (rail && chip) {
+        const railRect = rail.getBoundingClientRect();
+        const chipRect = chip.getBoundingClientRect();
+        const left = Math.max(0, rail.scrollLeft + chipRect.left - railRect.left - (rail.clientWidth - chipRect.width) / 2);
+        rail.scrollTo({ left, behavior: reduced ? 'instant' : 'smooth' });
+      }
+      categoryJumpTimer.current = window.setTimeout(() => { isCategoryJumping.current = false; }, reduced ? 100 : 1100);
+    };
+    // Cerrar primero el selector inferior y liberar el bloqueo de scroll.
+    if (wasSheetOpen) window.requestAnimationFrame(() => window.requestAnimationFrame(scrollOnlyTheCorrectAxes));
+    else scrollOnlyTheCorrectAxes();
   };
   const available = (p: B3Product) => p.available && minPrice(p) !== null;
   const mainButton = (product: B3Product, extraClass = '') => <button type="button" className={`b3-ci-add ${extraClass}`} disabled={!available(product)} onClick={() => onOpen(product)}>{available(product) ? 'Elegir y agregar' : 'No disponible'} <Plus size={19} strokeWidth={2.6}/></button>;

@@ -71,3 +71,14 @@ const medioPoster = fs.statSync('client/public/media/b3-medio-pollo-poster.webp'
 assert.ok(medioVideo.size > 50000 && medioVideo.size < 300000, 'Video nuevo real, optimizado y versionado');
 assert.ok(medioPoster.size > 5000, 'Poster del video nuevo versionado');
 console.log('14 imágenes y video publicados en GitHub: PASS.');
+
+const jumpSource = carta.slice(carta.indexOf('const moveTo = '),carta.indexOf('const available =',carta.indexOf('const moveTo = ')));
+assert.ok(jumpSource.includes('window.scrollTo({ top,'), 'Las categorias desplazan verticalmente la pagina');
+assert.ok(jumpSource.includes('rail.scrollTo({ left,'), 'El chip desplaza solo su rail horizontal');
+assert.ok(!jumpSource.includes('.scrollIntoView('), 'Nunca desplazar documento desde la barra de chips');
+assert.ok(jumpSource.includes('wasSheetOpen') && jumpSource.includes('requestAnimationFrame'), 'La hoja de categorias libera el bloqueo antes de desplazar');
+assert.ok(carta.includes('className="b3-ci-flip-back-heading"'), 'Reverso con descripcion editorial breve');
+assert.ok(carta.includes('className="b3-ci-flip-includes"'), 'Componentes de plato ordenados');
+assert.ok(carta.includes('className="b3-ci-flip-bottom"'), 'Pie de reverso premium');
+assert.ok(styles.includes('object-fit:contain;'), 'Fotografias sin recortes');
+console.log('Categoria: ejes de scroll separados; fotos completas y reverso refinado: PASS');

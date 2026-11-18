@@ -125,3 +125,9 @@ Se corrigió la ausencia del video: los recursos binarios **ya están versionado
 Sin rediseñar la web, el fixture de la Carta contiene 14 artículos: 6 platos, 5 combos y 3 bebidas, con precios de demostración en soles. Cada artículo tiene asignado un nombre de fotografía suministrada por el usuario. La Carta conserva una tarjeta por fila y el botón de compra; al tocar la fotografía, gira y muestra su contenido (la segunda pulsación la devuelve a su posición). La animación FLIP hacia la ficha de producto y el carrito permanecen.
 
 Los 14 archivos WebP optimizados **ya están publicados en GitHub**, en `client/public/menu/`, junto con el video nuevo de medio pollo y su poster en `client/public/media/`. Un solo `git pull origin main` descarga todos los archivos, sin ZIP. El nuevo video ocupa el bloque audiovisual existente; se conserva el anterior como respaldo. No se modifican las API ni la compra real.
+
+## Carta v1.2.6 — botones y encuadres
+
+Reparado el cambio de sección «Menú / Combos / Bebidas»: el desplazamiento **vertical** mueve únicamente el documento, mientras que la barra de chips se centra mediante su propio desplazamiento **horizontal**. Desde el selector inferior se espera a que se cierre antes de navegar. Se conserva la selección activa durante la animación para que no marque otra categoría temporalmente. Todas las fotografías de `/menu/` se muestran con `object-fit: contain` y escala 94 % para que la presentación quede completa, sin ampliar o recortar el plato.
+
+Las caras posteriores de las fotografías ahora tienen título, descripción breve según el tipo de plato, ingredientes derivados **solo** del nombre proporcionado y precio marcado como referencial en el modo demo. La ficha de compra, tarjeta única por fila, video y animaciones continúan intactos.
