@@ -23,3 +23,11 @@
 @media(prefers-reduced-motion:reduce){
  .b3-website--menu .b3-ci-motion-video{animation:none}
 }
+
+/* Acceso visible para encontrar inmediatamente el video desde el inicio de la Carta. */
+.b3-website--menu .b3-ci-video-shortcut{display:inline-flex;align-items:center;gap:9px;background:#2b1714;border:1px solid #aa3b32;color:#ffe4db;border-radius:12px;padding:10px 12px;margin:6px 0 17px;font:800 11px 'DM Sans',sans-serif;letter-spacing:.035em}
+.b3-website--menu .b3-ci-video-shortcut svg{color:#ff6a52;flex:none}
+.b3-website--menu .b3-ci-video-shortcut>span{font-size:18px;color:#fff}
+.b3-website--menu .b3-ci-video-shortcut:hover,.b3-website--menu .b3-ci-video-shortcut:focus-visible{background:#4d221a;border-color:#FE1601}
+.b3-website--menu #b3-video-giro{scroll-margin-top:96px}
+@media(max-width:680px){.b3-website--menu .b3-ci-video-shortcut{font-size:10px;padding:9px 11px;margin:5px 0 15px}.b3-website--menu #b3-video-giro{scroll-margin-top:82px}}

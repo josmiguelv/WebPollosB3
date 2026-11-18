@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { ArrowLeft, ArrowUp, Check, ChevronDown, List, Plus, Search, Settings2, ShoppingBag, Type, X } from 'lucide-react';
+import { ArrowLeft, ArrowUp, Check, ChevronDown, Clapperboard, List, Plus, Search, Settings2, ShoppingBag, Type, X } from 'lucide-react';
 import type { B3Catalog, B3Product } from '@/lib/storefront/catalog';
 import type { CartItem, Delivery } from './Home';
 import { B3_CARTA_PILOT } from '@/lib/navigation';
@@ -112,6 +112,7 @@ export function CartaInmersiva({ data, demo, error, onOpen, cart, total, setQty,
       {demo && <p className="b3-ci-design-notice">VISTA DE DISEÑO · PRODUCTOS, FOTOS Y PRECIOS REFERENCIALES. SIN PEDIDOS REALES.</p>}
       {!query && <>
         <div className="b3-ci-introduction"><span>CARTA DE HOY</span><strong>· Pollos B3</strong><small>Santa Anita, Lima</small></div>
+        {B3_CARTA_PILOT && <a className="b3-ci-video-shortcut" href="#b3-video-giro"><Clapperboard size={17} aria-hidden="true"/> VER EL PLATO EN MOVIMIENTO <span aria-hidden="true">↓</span></a>}
         {lead && <section className="b3-ci-lead" aria-labelledby="b3-ci-lead-title">
           <p className="b3-ci-pretitle">ELIGE A TU MANERA</p>
           <h1 id="b3-ci-lead-title">{lead.name}</h1>
@@ -121,7 +122,7 @@ export function CartaInmersiva({ data, demo, error, onOpen, cart, total, setQty,
           </motion.button>
           <div className="b3-ci-lead-actions"><button className="b3-ci-primary" onClick={() => onOpen(lead)} disabled={!available(lead)}>Elegir · {minPrice(lead) === null ? 'Consultar' : soles(minPrice(lead)!)} <Plus size={18}/></button><button className="b3-ci-secondary" onClick={() => onOpen(lead)}>Ver detalles</button></div>
         </section>}
-        {demo && <VideoGiroDemo fallbackImage={lead?.imageUrl}/>}
+        {B3_CARTA_PILOT && <VideoGiroDemo fallbackImage={lead?.imageUrl}/>}
         {discoveries.length > 0 && <section className="b3-ci-discoveries" aria-labelledby="b3-ci-discover-title">
           <div className="b3-ci-subheading"><h2 id="b3-ci-discover-title">Para descubrir</h2><span>Desliza para explorar <ChevronDown size={14}/></span></div>
           <div className="b3-ci-reel">{discoveries.map(p => <article className="b3-ci-reel-card" key={p.id}>
