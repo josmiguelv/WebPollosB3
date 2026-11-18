@@ -5,6 +5,7 @@ import type { B3Catalog, B3Product } from '@/lib/storefront/catalog';
 import type { CartItem, Delivery } from './Home';
 import { B3_CARTA_PILOT } from '@/lib/navigation';
 import { CartaCompra } from './CartaCompra';
+import { VideoGiroDemo } from './VideoGiroDemo';
 import { soles } from '@/lib/storefront/catalog';
 import { SiteLink } from '@/lib/navigation';
 import './carta-inmersiva.css';
@@ -120,6 +121,7 @@ export function CartaInmersiva({ data, demo, error, onOpen, cart, total, setQty,
           </motion.button>
           <div className="b3-ci-lead-actions"><button className="b3-ci-primary" onClick={() => onOpen(lead)} disabled={!available(lead)}>Elegir · {minPrice(lead) === null ? 'Consultar' : soles(minPrice(lead)!)} <Plus size={18}/></button><button className="b3-ci-secondary" onClick={() => onOpen(lead)}>Ver detalles</button></div>
         </section>}
+        {demo && <VideoGiroDemo fallbackImage={lead?.imageUrl}/>}
         {discoveries.length > 0 && <section className="b3-ci-discoveries" aria-labelledby="b3-ci-discover-title">
           <div className="b3-ci-subheading"><h2 id="b3-ci-discover-title">Para descubrir</h2><span>Desliza para explorar <ChevronDown size={14}/></span></div>
           <div className="b3-ci-reel">{discoveries.map(p => <article className="b3-ci-reel-card" key={p.id}>

@@ -107,3 +107,9 @@ La web entra directamente en /carta, con la animación de introducción de 1,9 s
 
 ### Continuación de compra dentro de Carta
 En el piloto, **Mi pedido, Delivery/Recojo, Datos y Resumen/Pago** aparecen dentro de la misma columna de Carta y comparten el carrito persistente. No se navega a /checkout ni se procesa pago. Los métodos de pago son solo opciones visuales: confirmar está deshabilitado hasta integrar pedidos, precios, cobertura y medios de pago con el administrador de Pollos B3.
+
+## Video giratorio en Carta — demostración (17/11/2026)
+
+Se añadió el componente `VideoGiroDemo` dentro de **/carta** (después del producto principal y antes de las sugerencias) con la grabación enviada por el usuario: pollo a la brasa con papas y ensalada sobre plataforma giratoria. Clip de 4,08 s, optimizado a ~100 KB, sin audio y con poster WebP (~10 KB). El video se reproduce automáticamente solo al entrar en pantalla, se pausa al salir, ofrece control reproducir/pausar y respeta la preferencia de movimiento reducido. El recurso **no es un giro Canvas 360° controlable**, ni debe presentarse como producto oficial B3. Todo el contenido se muestra únicamente cuando la vista de diseño está activa.
+
+**Instalación de los recursos:** la publicación de GitHub incluye el componente y sus estilos, pero los archivos de video binarios se distribuyen separadamente en `PollosB3_Video_Giratorio_Assets_v1.zip`. Extraer dicho ZIP **sobre la raíz del proyecto** para obtener `client/public/media/b3-giro-demo.mp4` y `client/public/media/b3-giro-poster.webp`. Sin esos archivos se mostrará una imagen de respaldo y no se reproducirá ningún video. Activar `VITE_B3_ENABLE_DESIGN_PREVIEW=true` en `client/.env.local`. No se alteran pagos, pedidos, navegación ni animaciones existentes.

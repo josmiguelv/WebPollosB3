@@ -30,3 +30,10 @@ console.log('Comprobación estática Carta Inmersiva: PASS.');
 
 assert.ok(carta.includes('<CartaCompra'),'Compra dentro del marco de Carta');
 assert.ok(carta.includes('b3-ci-buybar'),'Barra de Mi pedido');
+
+assert.ok(carta.includes('<VideoGiroDemo fallbackImage={lead?.imageUrl}/>'),'Video de demostración dentro de Carta');
+const giro = fs.readFileSync('client/src/pages/VideoGiroDemo.tsx','utf8');
+assert.ok(giro.includes('IntersectionObserver') && giro.includes('video.pause()'),'Control de consumo fuera de pantalla');
+assert.ok(giro.includes('mediaError') && giro.includes('fallbackImage'),'Fallback si falta video');
+assert.ok(giro.includes('!reduced') && giro.includes('loop muted playsInline'),'Accesibilidad y reproducción silenciosa');
+assert.ok(carta.includes('demo && <VideoGiroDemo'),'Video solo en modo demostración');
