@@ -16,7 +16,7 @@ for(const [name,source,token] of [
  ['Color de marca',styles,'#FE1601'],
  ['Ancho móvil centrado',styles,'max-width:656px'],
  ['Datos oficiales desde adaptador',catalog,'loadPublicCatalog'],
- ['FLIP',carta,'layoutId={`b3-image-${product.id}`}'],
+ ['FLIP',carta,'layoutId: 'b3-image-' + product.id'],
  ['Modal de personalización',home,'<ProductDetail'],
  ['Giro Canvas',home,'<SpinCanvas'],
  ['Historias',home,'4500'],
@@ -47,3 +47,8 @@ assert.ok(poster.size > 1000 && poster.size < 100000,'Poster incluido en GitHub'
 // Regression: the Stories component must not reference an undeclared demo variable.
 assert.ok(home.includes('function Stories({ stories, onProduct, demo }'), 'Demo declarado en Historias');
 assert.ok(home.includes('onProduct={openById} demo={demo}/>'), 'Propiedad demo transmitida a Historias');
+
+assert.ok(carta.includes('function FlipDishPhoto('), 'Imagen giratoria integrada');
+assert.ok(carta.includes('setFlipped(previous => !previous)'), 'El giro es reversible');
+assert.ok(styles.includes('.b3-ci-flip-inner.is-flipped'), 'Transformacion CSS 3D');
+assert.ok(carta.includes('const mainButton ='), 'Comprar con ficha original');

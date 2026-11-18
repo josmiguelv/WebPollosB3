@@ -191,3 +191,33 @@
 .b3-website--menu .detail-body h2{font-size:clamp(26px,5vw,38px)}
 .b3-website--menu .detail-order{grid-column:auto;flex:none}
 @media(max-width:680px){.b3-website--menu .b3-ci-buybar{width:calc(100vw - 22px);font-size:13px}.b3-website--menu .detail-backdrop{padding:0;align-items:flex-end}.b3-website--menu .detail-sheet{height:96svh;max-height:96svh;max-width:100%;border-radius:22px 22px 0 0}.b3-website--menu .detail-media{height:32svh;min-height:190px}}
+
+/* Una tarjeta por fila; solo gira el área de foto, sin tocar la estructura. */
+.b3-website--menu .b3-ci-flip-photo{position:relative;perspective:1000px;overflow:visible}
+.b3-website--menu .b3-ci-flip-photo.b3-ci-lead-photo-button{aspect-ratio:1.32}
+.b3-website--menu .b3-ci-flip-inner{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .62s cubic-bezier(.2,.75,.2,1)}
+.b3-website--menu .b3-ci-flip-inner.is-flipped{transform:rotateY(180deg)}
+.b3-website--menu .b3-ci-flip-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:inherit;overflow:hidden}
+.b3-website--menu .b3-ci-flip-front{background:#111}
+.b3-website--menu .b3-ci-flip-front.b3-ci-lead-photo{height:100%;width:100%;aspect-ratio:auto}
+.b3-website--menu .b3-ci-flip-back{transform:rotateY(180deg);display:flex;flex-direction:column;align-items:flex-start;gap:9px;justify-content:center;text-align:left;background:linear-gradient(145deg,#29201e,#100e0e);color:white;border:1px solid #5d453d;padding:clamp(14px,4vw,27px)}
+.b3-website--menu .b3-ci-flip-kicker{color:#ff715d;letter-spacing:.12em;font-size:10px;font-weight:800}
+.b3-website--menu .b3-ci-flip-back>strong{font:800 clamp(15px,3.5vw,22px)/1.2 Montserrat,sans-serif;letter-spacing:-.045em}
+.b3-website--menu .b3-ci-flip-parts{display:flex;flex-wrap:wrap;align-content:flex-start;gap:6px;overflow:auto;min-height:0}
+.b3-website--menu .b3-ci-flip-parts>span{display:inline-flex;align-items:center;gap:5px;background:#ffffff18;border:1px solid #ffffff24;border-radius:8px;padding:6px 8px;font-size:clamp(10px,2.8vw,13px);line-height:1.28}
+.b3-website--menu .b3-ci-flip-parts svg{color:#ff705c;flex:none}
+.b3-website--menu .b3-ci-flip-back>small{margin-top:auto;color:#c9b9b1;font-size:9px;font-weight:800;letter-spacing:.05em}
+.b3-website--menu .b3-ci-flip-hint{position:absolute;z-index:4;top:11px;right:11px;border:1px solid #ffffff44;background:#161616e6;color:#fff;border-radius:8px;padding:7px 9px;font-size:9px;font-weight:800;letter-spacing:.04em;pointer-events:none}
+.b3-website--menu .b3-ci-flip-front .b3-ci-price-pill,
+.b3-website--menu .b3-ci-flip-front .b3-ci-small-price{position:absolute;z-index:4}
+@media(max-width:680px){
+ .b3-website--menu .b3-ci-flip-photo.b3-ci-lead-photo-button{aspect-ratio:1.18}
+ .b3-website--menu .b3-ci-flip-hint{top:8px;right:8px;padding:5px 7px;font-size:8px}
+ .b3-website--menu .b3-ci-flip-back{gap:7px;padding:14px}
+ .b3-website--menu .b3-ci-flip-back>strong{font-size:clamp(13px,4.3vw,19px)}
+ .b3-website--menu .b3-ci-flip-parts>span{font-size:10px}
+ .b3-website--menu .b3-ci-reel-photo .b3-ci-flip-back{padding:9px;gap:4px}
+ .b3-website--menu .b3-ci-reel-photo .b3-ci-flip-back>strong{font-size:11px}
+ .b3-website--menu .b3-ci-reel-photo .b3-ci-flip-parts>span{font-size:9px;padding:3px 5px}
+}
+@media(prefers-reduced-motion:reduce){.b3-website--menu .b3-ci-flip-inner{transition:none}}

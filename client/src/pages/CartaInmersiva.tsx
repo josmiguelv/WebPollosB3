@@ -39,6 +39,35 @@ function DishPhoto({ product, priority = false, label = false }: { product: B3Pr
   </div>;
 }
 
+/* Un toque en la foto la gira; el botón de compra permanece separado. */
+function FlipDishPhoto({ product, kind = 'dish', priority = false }: { product: B3Product; kind?: 'dish'|'lead'|'reel'; priority?: boolean }) {
+  const [flipped, setFlipped] = useState(false);
+  const included = product.name.split(/\s+\+\s+/).filter(Boolean);
+  const base = kind === 'lead' ? 'b3-ci-lead-photo-button' : kind === 'reel' ? 'b3-ci-reel-photo' : 'b3-ci-dish-photo';
+  const price = minPrice(product);
+  const layoutProps = kind === 'dish' ? { layoutId: 'b3-image-' + product.id, transition: { type: 'tween' as const, duration: .48 } } : {};
+  return <motion.button type="button" className={base + ' b3-ci-flip-photo'} data-product-id={product.id} {...layoutProps}
+    aria-label={(flipped ? 'Volver a la foto de ' : 'Girar foto y ver qué incluye ') + product.name}
+    aria-pressed={flipped} onClick={() => setFlipped(previous => !previous)}>
+    <div className={'b3-ci-flip-inner' + (flipped ? ' is-flipped' : '')}>
+      <div className={'b3-ci-flip-face b3-ci-flip-front' + (kind === 'lead' ? ' b3-ci-lead-photo' : '')}>
+        <DishPhoto product={product} priority={priority} label/>
+        <span className="b3-ci-flip-hint" aria-hidden="true">↻ QUÉ INCLUYE</span>
+        {kind !== 'dish' && <span className={kind === 'lead' ? 'b3-ci-price-pill' : 'b3-ci-small-price'}>{price === null ? 'Consultar' : soles(price)}</span>}
+      </div>
+      <div className="b3-ci-flip-face b3-ci-flip-back">
+        <span className="b3-ci-flip-kicker">¿QUÉ INCLUYE?</span>
+        <strong>{product.name}</strong>
+        <div className="b3-ci-flip-parts">
+          {included.length > 1 ? included.map((item,i) => <span key={i}><Check size={14} aria-hidden="true"/>{item}</span>)
+            : <span><Check size={14} aria-hidden="true"/>{product.description}</span>}
+        </div>
+        <small>↶ TOCA PARA VOLVER</small>
+      </div>
+    </div>
+  </motion.button>;
+}
+
 export function CartaInmersiva({ data, demo, error, onOpen, cart, total, setQty, delivery, setDelivery, query, setQuery }: Props) {
   const [purchaseOpen,setPurchaseOpen]=useState(false);
   const cartCount=cart.reduce((sum,item)=>sum+item.qty,0);
@@ -117,16 +146,14 @@ export function CartaInmersiva({ data, demo, error, onOpen, cart, total, setQty,
           <p className="b3-ci-pretitle">ELIGE A TU MANERA</p>
           <h1 id="b3-ci-lead-title">{lead.name}</h1>
           <p className="b3-ci-lead-description">{lead.description}</p>
-          <motion.button type="button" className="b3-ci-lead-photo-button" onClick={() => onOpen(lead)} aria-label={`Ver detalles de ${lead.name}`}>
-            <div className="b3-ci-lead-photo"><DishPhoto product={lead} priority label/><span className="b3-ci-price-pill">{minPrice(lead) === null ? 'CONSULTAR' : `DESDE ${soles(minPrice(lead)!)}`}</span></div>
-          </motion.button>
+          <FlipDishPhoto product={lead} kind="lead" priority/>
           <div className="b3-ci-lead-actions"><button className="b3-ci-primary" onClick={() => onOpen(lead)} disabled={!available(lead)}>Elegir · {minPrice(lead) === null ? 'Consultar' : soles(minPrice(lead)!)} <Plus size={18}/></button><button className="b3-ci-secondary" onClick={() => onOpen(lead)}>Ver detalles</button></div>
         </section>}
         {B3_CARTA_PILOT && <VideoGiroDemo fallbackImage={lead?.imageUrl}/>}
         {discoveries.length > 0 && <section className="b3-ci-discoveries" aria-labelledby="b3-ci-discover-title">
           <div className="b3-ci-subheading"><h2 id="b3-ci-discover-title">Para descubrir</h2><span>Desliza para explorar <ChevronDown size={14}/></span></div>
           <div className="b3-ci-reel">{discoveries.map(p => <article className="b3-ci-reel-card" key={p.id}>
-            <button className="b3-ci-reel-photo" onClick={() => onOpen(p)} aria-label={`Ver ${p.name}`}><DishPhoto product={p} label/><span className="b3-ci-small-price">{minPrice(p) === null ? 'Consultar' : soles(minPrice(p)!)}</span></button>
+            <FlipDishPhoto product={p} kind="reel"/>
             <h3>{p.name}</h3><button className="b3-ci-reel-add" onClick={() => onOpen(p)}>Elegir +</button>
           </article>)}</div>
         </section>}
@@ -143,11 +170,11 @@ export function CartaInmersiva({ data, demo, error, onOpen, cart, total, setQty,
         {categoryEntries.filter(cat => cat.products.length > 0).map(cat => <section id={`b3-ci-cat-${cat.id}`} data-b3-ci-category={cat.id} className="b3-ci-category-section" key={cat.id}>
           <div className="b3-ci-section-heading"><h3>{cat.name}</h3><span>{cat.products.length} {cat.products.length === 1 ? 'producto' : 'productos'}</span></div>
           {cat.products.map(product => <article className="b3-ci-dish" key={product.id}>
-            <motion.button type="button" className="b3-ci-dish-photo" data-product-id={product.id} layoutId={`b3-image-${product.id}`} transition={{type:'tween',duration:.48}} onClick={() => onOpen(product)} aria-label={`Ver ${product.name}`}><DishPhoto product={product} label/></motion.button>
+            <FlipDishPhoto product={product}/>
             <div className="b3-ci-dish-copy"><span className="b3-ci-dish-category">{cat.name}</span><h4>{product.name}</h4><p>{product.description}</p><strong>{minPrice(product) === null ? 'Precio por confirmar' : soles(minPrice(product)!)}</strong>{mainButton(product)}</div>
           </article>)}
         </section>)}
-        {remaining.length > 0 && <section id="b3-ci-cat-otros" data-b3-ci-category="otros" className="b3-ci-category-section"><div className="b3-ci-section-heading"><h3>Otros productos</h3><span>{remaining.length} productos</span></div>{remaining.map(product => <article className="b3-ci-dish" key={product.id}><motion.button type="button" className="b3-ci-dish-photo" data-product-id={product.id} layoutId={`b3-image-${product.id}`} transition={{type:'tween',duration:.48}} onClick={() => onOpen(product)}><DishPhoto product={product} label/></motion.button><div className="b3-ci-dish-copy"><h4>{product.name}</h4><p>{product.description}</p><strong>{minPrice(product) === null ? 'Precio por confirmar' : soles(minPrice(product)!)}</strong>{mainButton(product)}</div></article>)}</section>}
+        {remaining.length > 0 && <section id="b3-ci-cat-otros" data-b3-ci-category="otros" className="b3-ci-category-section"><div className="b3-ci-section-heading"><h3>Otros productos</h3><span>{remaining.length} productos</span></div>{remaining.map(product => <article className="b3-ci-dish" key={product.id}><FlipDishPhoto product={product}/><div className="b3-ci-dish-copy"><h4>{product.name}</h4><p>{product.description}</p><strong>{minPrice(product) === null ? 'Precio por confirmar' : soles(minPrice(product)!)}</strong>{mainButton(product)}</div></article>)}</section>}
       </section>
       <footer className="b3-ci-endnote"><img src="/brand/pollos-b3-logo.png" alt=""/><span>POLLOS B3 · SANTA ANITA</span>{!B3_CARTA_PILOT && <><p>Vuelve al inicio para explorar la experiencia completa.</p><SiteLink to="/">Ir a Inicio <ArrowLeft size={16}/></SiteLink></>}</footer>
     </div>

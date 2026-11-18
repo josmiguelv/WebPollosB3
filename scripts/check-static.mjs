@@ -56,7 +56,7 @@ assert.ok(!home.includes('function MenuSection('),'Se eliminó la Carta anterior
 assert.ok(ci.includes('b3-ci-shell')&&ci.includes('b3-ci-lead')&&ci.includes('b3-ci-dish'),'Carta vertical gastronómica');
 assert.ok(ci.includes('b3-ci-sheet') && ci.includes('b3-ci-chips'),'Selector inferior de categorías');
 assert.ok(ci.includes('setSearchOpen')&&ci.includes('setLargeText')&&ci.includes('setLightTheme'),'Controles funcionales');
-assert.ok(ci.includes('layoutId={`b3-image-${product.id}`}'),'FLIP preservado');
+assert.ok(ci.includes('layoutId: 'b3-image-' + product.id'),'FLIP preservado');
 assert.ok(ciCss.includes('max-width:656px')&&ciCss.includes('.b3-website--menu'),'Diseño central limitado a Carta');
 assert.ok(home.includes("route==='/locales'&& <><CommercialHero"),'Locales intacto');
 assert.ok(home.includes("route==='/combos'&& <><CommercialHero"),'Combos intacto');
