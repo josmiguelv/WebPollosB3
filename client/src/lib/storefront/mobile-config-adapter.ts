@@ -85,7 +85,6 @@ export function normalizeMobileConfig(
     }
     if (seenStores.has(id)) continue;
     seenStores.add(id);
-    const lat = decimal(raw.latitude);
     const lng = typeof raw.longitude === 'number' && Number.isFinite(raw.longitude) ? raw.longitude : undefined;
     const latitude = typeof raw.latitude === 'number' && Number.isFinite(raw.latitude) ? raw.latitude : undefined;
     const radius = decimal(raw.radiusKm) ?? decimal(raw.radius_km);
@@ -117,7 +116,8 @@ export function normalizeMobileConfig(
   const categories: B3Category[] = [];
   const products: B3Product[] = [];
   const seenProducts = new Set<string>();
-  for (const item of data.products ?? []) {
+  const apiProducts: unknown[] = Array.isArray(data.products) ? data.products : [];
+  for (const item of apiProducts) {
     const raw = object(item);
     const id = cleanText(raw?.id);
     const name = cleanText(raw?.name);

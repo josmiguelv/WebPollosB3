@@ -1,0 +1,32 @@
+name: Pollos B3 · Verificación web
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  calidad-web:
+    name: TypeScript, contratos API y compilación
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Obtener código
+        uses: actions/checkout@v4
+      - name: Instalar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: package.json
+      - name: Instalar dependencias
+        run: npm install --no-audit --no-fund
+      - name: Revisar tipos
+        run: npm run check
+      - name: Verificar contratos y recursos
+        run: npm run check:static
+      - name: Compilar para producción
+        run: npm run build
