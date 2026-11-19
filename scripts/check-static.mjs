@@ -79,3 +79,8 @@ assert.ok(home.includes('onProduct={openById} demo={demo}/>'), 'Home pasa la se�
 // Configuración móvil sin modificar la estructura de Carta ni los productos de demostración.
 assert.ok(home.includes('loadMobileConfig(abort.signal)'), 'La web consulta la API móvil');
 assert.ok(home.includes('applyMobileConfig(next, mobile.value)'), 'Los locales se reemplazan y los productos se fusionan');
+
+const viteTunnelSource = fs.readFileSync('vite.config.ts', 'utf8');
+assert.ok(viteTunnelSource.includes("const allowedHosts = ['earthquake-represents-hiv-valentine.trycloudflare.com']"), 'Cloudflare: host de Carta autorizado');
+assert.ok(viteTunnelSource.includes('strictPort: true, allowedHosts, proxy: mobileProxy'), 'El servidor Vite acepta solo el tunel autorizado');
+assert.ok(!viteTunnelSource.includes('allowedHosts: true'), 'No exponer Vite a cualquier host');

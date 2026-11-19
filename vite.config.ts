@@ -7,6 +7,10 @@ const defaultMobileEndpoint = 'https://surprise-kong-stories-brand.trycloudflare
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, path.resolve(import.meta.dirname, 'client'), 'VITE_B3_');
   const origin = new URL(env.VITE_B3_MOBILE_CONFIG_URL || defaultMobileEndpoint).origin;
+  // Autorizar únicamente el túnel público actual de la Carta, no todos los hosts.
+  // Al cambiar el túnel, Vite también permite añadir el nuevo dominio mediante
+  // __VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS (definido antes de arrancar Vite).
+  const allowedHosts = ['earthquake-represents-hiv-valentine.trycloudflare.com'];
   const mobileProxy = {
     '/b3-mobile-config': {
       target: origin, changeOrigin: true, secure: true,
@@ -23,7 +27,7 @@ export default defineConfig(({ mode }) => {
     publicDir: path.resolve(import.meta.dirname, 'client', 'public'),
     resolve: { alias: { '@': path.resolve(import.meta.dirname, 'client', 'src') } },
     build: { outDir: path.resolve(import.meta.dirname, 'dist'), emptyOutDir: true },
-    server: { host: '0.0.0.0', port: 4321, strictPort: true, proxy: mobileProxy },
-    preview: { host: '0.0.0.0', port: 4321, strictPort: true, proxy: mobileProxy },
+    server: { host: '0.0.0.0', port: 4321, strictPort: true, allowedHosts, proxy: mobileProxy },
+    preview: { host: '0.0.0.0', port: 4321, strictPort: true, allowedHosts, proxy: mobileProxy },
   };
 });

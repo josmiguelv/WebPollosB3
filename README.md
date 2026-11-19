@@ -151,3 +151,11 @@ Las caras posteriores de las fotografías ahora tienen título, descripción bre
 En la ruta **/carta**, al confirmar «Agregar» en la ficha de producto aparece un **sobre B3** de papel cálido que sale del botón, hace un arco corto y cae suavemente en «Ver mi pedido». La primera compra utiliza la posición calculada de la barra, incluso antes de que aparezca. El subtotal animado **cuenta hasta el valor real** sin modificar los precios del carrito ni las operaciones de compra. Al aterrizar el sobre, tres trazos de vapor translúcido se elevan y desaparecen, con una confirmación discreta que se oculta sola. No usa GIF, dependencias nuevas ni sonido.
 
 El efecto se limita a la Carta actual de una sola tarjeta por fila; las demás rutas mantienen el indicador original. La animación imperativa limpia sus nodos al finalizar, cancelarse o desmontarse el componente. Para usuarios que prefieren movimiento reducido, no hay vuelo ni vapor; el importe se actualiza de inmediato. El carrito y el checkout siguen sin aceptar pedidos o pagos reales. Verificar con `npm run check:static`, `npm run check`, `npm run build` y en navegador a 390px y escritorio.
+
+## Túnel Cloudflare para Carta — acceso Vite autorizado (19/11/2026)
+
+El dominio `earthquake-represents-hiv-valentine.trycloudflare.com` está autorizado explícitamente en `vite.config.ts` para `server.allowedHosts` y `preview.allowedHosts`. No se habilita `allowedHosts: true`, dado que Vite advierte del riesgo de exponer código fuente. No se modifica el túnel independiente de la API.
+
+**Importante:** después de `git pull origin main`, hay que **detener el proceso anterior de Vite que ocupa el puerto 4321** y ejecutar `npm run dev` de nuevo. No basta abrir otra ventana: la segunda instancia falla con `Port 4321 is already in use` y seguirá sirviendo la configuración antigua. Conserva abierto `cloudflared tunnel --url http://localhost:4321` para mantener el mismo enlace público.
+
+Si Cloudflare asigna otro nombre de dominio, autorizarlo con `$env:__VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS="nuevo-dominio.trycloudflare.com"` **en la misma terminal que va a iniciar Vite** antes de ejecutar `npm run dev`.
