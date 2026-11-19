@@ -284,3 +284,88 @@
  .b3-website--menu .b3-ci-reel-photo .b3-ci-flip-bottom>span{font-size:8px}
  .b3-website--menu .b3-ci-reel-photo .b3-ci-flip-bottom>small{display:none}
 }
+
+
+/* POLLOS B3 / Carta: microinteracción premium de confirmación de pedido.
+   El sobre viaja desde el botón Agregar y cae en la barra; el subtotal suma
+   de forma fluida y el vapor solo aparece después de la llegada. */
+.b3-order-envelope{
+  position:fixed;left:0;top:0;z-index:170;pointer-events:none;
+  display:block;width:44px;height:35px;overflow:hidden;
+  background:linear-gradient(155deg,#fffdf6,#f5e8d9);
+  border:1px solid #e7c9a9;border-radius:6px;
+  box-shadow:0 12px 30px #0006,0 2px 5px #0003;
+  transform-origin:50% 50%;will-change:transform,opacity;
+}
+.b3-order-envelope__fold{
+  position:absolute;inset:0;
+  background:linear-gradient(170deg,#fffaf0,#efdbc4);
+  clip-path:polygon(0 0,100% 0,50% 57%);
+  filter:drop-shadow(0 1px 1px #a374544d);
+}
+.b3-order-envelope__seal{
+  position:absolute;top:12px;left:15px;
+  display:grid;place-items:center;width:15px;height:15px;
+  background:#FE1601;border:1px solid #de2818;border-radius:50%;
+  box-shadow:0 1px 4px #9c33274d;
+  color:white;font:800 6px Montserrat,sans-serif;
+  font-style:normal;letter-spacing:-.04em;
+}
+.b3-website--menu .b3-ci-buybar{overflow:visible}
+.b3-website--menu .b3-ci-buybar-amount{
+  position:relative;display:inline-flex;align-items:center;gap:9px;
+  isolation:isolate;white-space:nowrap;
+}
+.b3-website--menu .b3-ci-amount-number{display:inline-block;min-width:75px;text-align:right;font-variant-numeric:tabular-nums}
+.b3-website--menu .b3-ci-buybar-arrow{display:inline-block;opacity:.9}
+.b3-website--menu .b3-ci-cart-vapor{
+  position:absolute;left:50%;bottom:80%;width:66px;height:56px;
+  transform:translateX(-50%);pointer-events:none;z-index:4;
+}
+.b3-website--menu .b3-ci-cart-vapor i{
+  position:absolute;bottom:0;left:14px;display:block;
+  width:14px;height:27px;
+  border:2px solid #fff7e5b5;border-right-color:transparent;
+  border-bottom-color:transparent;border-radius:55% 38% 55% 40%;
+  filter:blur(1.2px);
+  opacity:0;
+  animation:b3-ci-vapor-rise 1.35s ease-out both;
+}
+.b3-website--menu .b3-ci-cart-vapor i:nth-child(2){
+  left:31px;height:33px;width:13px;
+  border-color:#ffe2cfac;border-left-color:transparent;
+  border-bottom-color:transparent;
+  animation-delay:85ms;
+}
+.b3-website--menu .b3-ci-cart-vapor i:nth-child(3){
+  left:46px;height:25px;width:11px;
+  animation-delay:155ms;
+}
+@keyframes b3-ci-vapor-rise{
+  0%{opacity:0;transform:translate3d(0,7px,0) rotate(-7deg) scale(.65)}
+  24%{opacity:.85}
+  65%{opacity:.35}
+  100%{opacity:0;transform:translate3d(5px,-39px,0) rotate(19deg) scale(1.23)}
+}
+.b3-website--menu .b3-ci-cart-confirmation{
+  position:absolute;right:10px;bottom:calc(100% + 10px);z-index:4;
+  display:inline-flex;align-items:center;gap:7px;white-space:nowrap;
+  padding:9px 12px;border-radius:10px;
+  background:#fff8ee;color:#321c15;
+  border:1px solid #f2d9c5;
+  box-shadow:0 6px 26px #0005;
+  font:800 11px 'DM Sans',sans-serif;
+  pointer-events:none;
+  animation:b3-ci-confirm-note 1.65s both ease-out;
+}
+.b3-website--menu .b3-ci-cart-confirmation svg{color:#d82b1a}
+@keyframes b3-ci-confirm-note{
+  0%{opacity:0;transform:translateY(12px) scale(.93)}
+  15%,65%{opacity:1;transform:translateY(0) scale(1)}
+  100%{opacity:0;transform:translateY(-9px) scale(.99)}
+}
+@media(prefers-reduced-motion:reduce){
+  .b3-order-envelope{display:none!important}
+  .b3-website--menu .b3-ci-cart-vapor{display:none}
+  .b3-website--menu .b3-ci-cart-confirmation{animation:none;opacity:1}
+}

@@ -82,3 +82,5 @@ assert.ok(carta.includes('className="b3-ci-flip-includes"'), 'Componentes de pla
 assert.ok(carta.includes('className="b3-ci-flip-bottom"'), 'Pie de reverso premium');
 assert.ok(styles.includes('object-fit:contain;'), 'Fotografias sin recortes');
 console.log('Categoria: ejes de scroll separados; fotos completas y reverso refinado: PASS');
+
+// Pruebas del nuevo efecto separadas para mantener este archivo legible.

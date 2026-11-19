@@ -145,3 +145,9 @@ Las caras posteriores de las fotografías ahora tienen título, descripción bre
 **En desarrollo:** Vite proxy mismo origen `/b3-mobile-config` y `/b3-mobile-images`. **En despliegue estático:** el navegador llama a HTTPS público directamente, y el servidor API debe permitir solicitudes CORS desde el dominio web, o debe configurarse un proxy de mismo origen. No se almacenan claves de administración ni se intenta escribir en el administrador: GET solo modifica el estado visual de la web.
 
 **Verificar:** `npm run check:static`, `npm run check`, `npm run build`. Si falla la API, los productos existentes permanecen y se muestra un aviso; nunca se elimina la lista de locales por un error de red o contrato.
+
+## Microinteracción premium al agregar productos (v1.3.1)
+
+En la ruta **/carta**, al confirmar «Agregar» en la ficha de producto aparece un **sobre B3** de papel cálido que sale del botón, hace un arco corto y cae suavemente en «Ver mi pedido». La primera compra utiliza la posición calculada de la barra, incluso antes de que aparezca. El subtotal animado **cuenta hasta el valor real** sin modificar los precios del carrito ni las operaciones de compra. Al aterrizar el sobre, tres trazos de vapor translúcido se elevan y desaparecen, con una confirmación discreta que se oculta sola. No usa GIF, dependencias nuevas ni sonido.
+
+El efecto se limita a la Carta actual de una sola tarjeta por fila; las demás rutas mantienen el indicador original. La animación imperativa limpia sus nodos al finalizar, cancelarse o desmontarse el componente. Para usuarios que prefieren movimiento reducido, no hay vuelo ni vapor; el importe se actualiza de inmediato. El carrito y el checkout siguen sin aceptar pedidos o pagos reales. Verificar con `npm run check:static`, `npm run check`, `npm run build` y en navegador a 390px y escritorio.

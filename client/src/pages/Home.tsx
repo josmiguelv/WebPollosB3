@@ -365,10 +365,65 @@ export default function Home() {
   const [query, setQuery] = useState('');
   const [delivery, setDelivery] = useState<Delivery>({mode:'delivery',address:'',storeId:''});
   const [cartBounce, setCartBounce] = useState(false);
+  const [cartArrival, setCartArrival] = useState(0);
+  const activeEnvelopeFlights = useRef<Animation[]>([]);
   const [toast, setToast] = useState('');
   const toastTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const doneIntro = () => { setIntro(false); if (!B3_CARTA_PILOT) try { sessionStorage.setItem('b3-intro-seen','1'); } catch {} };
+  // Carta: un sobre B3 viaja desde Agregar hasta el subtotal; después aparece el vapor.
+  // La tienda y el carrito se actualizan inmediatamente; el efecto solo es visual.
+  useEffect(() => () => {
+    activeEnvelopeFlights.current.forEach(animation => animation.cancel());
+    activeEnvelopeFlights.current = [];
+  }, []);
   const flyToCart = (productId: string) => {
+    if (route === '/carta') {
+      if (reduceMotion()) { setCartArrival(sequence => sequence + 1); return; }
+      const source = document.querySelector<HTMLElement>('.detail-add')
+        || document.querySelector<HTMLElement>('.detail-media');
+      const panel = document.querySelector<HTMLElement>('.b3-ci-shell');
+      const footer = document.querySelector<HTMLElement>('.b3-ci-buybar');
+      const start = source?.getBoundingClientRect();
+      const footprint = panel?.getBoundingClientRect();
+      const end = footer?.getBoundingClientRect();
+      // El primer producto hace aparecer la barra después del clic. Usar su
+      // posición prevista para que el sobre también llegue en el primer pedido.
+      const frameWidth = Math.min(624, window.innerWidth - 24);
+      const frameLeft = footprint ? footprint.left + (footprint.width - frameWidth) / 2 : (window.innerWidth - frameWidth) / 2;
+      const targetX = end ? end.right - 84 : frameLeft + frameWidth - 84;
+      const targetY = end ? end.top + end.height / 2 : window.innerHeight - Math.max(14, 0) - 30;
+      const fromX = start ? start.left + start.width / 2 : window.innerWidth / 2;
+      const fromY = start ? start.top + start.height / 2 : window.innerHeight / 2;
+      const envelope = document.createElement('span');
+      envelope.className = 'b3-order-envelope';
+      envelope.setAttribute('aria-hidden', 'true');
+      const fold = document.createElement('i');
+      fold.className = 'b3-order-envelope__fold';
+      const seal = document.createElement('i');
+      seal.className = 'b3-order-envelope__seal';
+      seal.textContent = 'B3';
+      envelope.append(fold, seal);
+      document.body.appendChild(envelope);
+      const x = (fromX + targetX) / 2;
+      const arcY = Math.min(fromY, targetY) - 72;
+      const position = (left: number, top: number, rotation: number, scale: number) =>
+        `translate3d(${left - 22}px,${top - 18}px,0) rotate(${rotation}deg) scale(${scale})`;
+      const animation = envelope.animate([
+        { transform: position(fromX, fromY, -10, .55), opacity: 0, offset: 0 },
+        { transform: position(fromX, fromY - 22, -4, 1), opacity: 1, offset: .16 },
+        { transform: position(x, arcY, 9, .94), opacity: 1, offset: .56 },
+        { transform: position(targetX, targetY - 22, 16, .64), opacity: 1, offset: .86 },
+        { transform: position(targetX, targetY, 0, .12), opacity: 0, offset: 1 },
+      ], { duration: 930, easing: 'cubic-bezier(.22,.75,.22,1)', fill: 'forwards' });
+      activeEnvelopeFlights.current.push(animation);
+      const cleanup = () => {
+        envelope.remove();
+        activeEnvelopeFlights.current = activeEnvelopeFlights.current.filter(current => current !== animation);
+      };
+      animation.onfinish = () => { cleanup(); setCartArrival(sequence => sequence + 1); };
+      animation.oncancel = cleanup;
+      return;
+    }
     if (reduceMotion()) return;
     const source = document.querySelector(`[data-product-id="${productId}"]`) || document.querySelector('.detail-media');
     const target = (B3_CARTA_PILOT ? document.querySelector('.b3-ci-cart') : null) || document.querySelector('.header-cart') || document.querySelector('.cart-floating-modern');
@@ -384,7 +439,19 @@ export default function Home() {
     const animation = circle.animate([{ transform:`translate(${sx}px,${sy}px) scale(1)`,opacity:1 },{transform:`translate(${(sx+ex)/2}px,${Math.min(sy,ey)-110}px) scale(.72)`,opacity:1,offset:.55},{transform:`translate(${ex}px,${ey}px) scale(.15)`,opacity:.6}],{duration:680,easing:'cubic-bezier(.21,.68,.16,1)',fill:'forwards'});
     animation.onfinish=()=>circle.remove(); animation.oncancel=()=>circle.remove();
   };
-  const addToCart = (item: CartItem, id: string) => { add(item); flyToCart(id); setCartBounce(true); setToast('Agregado a tu pedido'); if(toastTimer.current)clearTimeout(toastTimer.current); toastTimer.current=setTimeout(()=>{setToast('');setCartBounce(false);},2300); };
+  const addToCart = (item: CartItem, id: string) => {
+    add(item);
+    flyToCart(id);
+    if (route === '/carta') {
+      // No tapar la barra móvil con el antiguo toast: el sobre y el vapor confirman la operación.
+      setToast('');
+      return;
+    }
+    setCartBounce(true);
+    setToast('Agregado a tu pedido');
+    if(toastTimer.current) clearTimeout(toastTimer.current);
+    toastTimer.current = setTimeout(() => { setToast(''); setCartBounce(false); }, 2300);
+  };
   const notify = (title:string,text:string) => setNotice({title,text});
   const onNavigate = () => { setMobileMenu(false); setCartOpen(false); };
   useEffect(() => { document.title = `${route === '/404' ? 'No encontrada' : pageTitles[route]} | Pollos B3 · Santa Anita`; }, [route]);
@@ -415,7 +482,7 @@ export default function Home() {
         <HomePathways onChat={()=>setChatOpen(true)}/>
         <section className="support-modern layout-gutter" id="atencion"><div className="support-orbital"><MessageCircle size={88} strokeWidth={.7}/></div><div><p className="section-index section-index--light">TU VERSO / ATENCIÓN</p><h2>Hablemos.<br/><i>Sin salir de aquí.</i></h2><p>Un espacio de atención dentro de Pollos B3, preparado para el canal WEB de TU VERSO.</p><button className="b3-pill b3-pill--white" onClick={()=>setChatOpen(true)}>ABRIR ATENCIÓN WEB <ArrowUpRight size={18}/></button></div><span className="support-side-label">TU VERSO · BY INTEGRA B2G</span></section>
       </>}
-      {route==='/carta'&& <CartaInmersiva data={data} demo={demo} error={error} onOpen={setOpenProduct} cart={cart} total={total} setQty={setQty} delivery={delivery} setDelivery={setDelivery} query={query} setQuery={setQuery}/>}
+      {route==='/carta'&& <CartaInmersiva data={data} demo={demo} error={error} onOpen={setOpenProduct} cart={cart} total={total} cartArrival={cartArrival} setQty={setQty} delivery={delivery} setDelivery={setDelivery} query={query} setQuery={setQuery}/>}
       {route==='/combos'&& <><CommercialHero eyebrow="EXPERIENCIA / COMBOS" heading="Tu combo." highlight="Tus reglas." description="Una experiencia interactiva de tres pasos para elegir algo a tu medida. Las opciones y descuentos dependen de la carta oficial."/><ComboBuilder data={data} add={addToCart}/></>}
       {route==='/locales'&& <><CommercialHero eyebrow="SANTA ANITA / LOCALES" heading="Cerca de ti." highlight="A lo B3." description="Selecciona dónde recoger o introduce tu dirección de entrega. La cobertura y disponibilidad se validarán desde administración."><button className="commercial-button commercial-button--light" onClick={()=>setLocationOpen(true)}>ELEGIR MODALIDAD <ArrowRight size={17}/></button></CommercialHero><Locations data={data} openDelivery={()=>setLocationOpen(true)}/></>}
       {route==='/promociones'&&<PromotionsPage/>}

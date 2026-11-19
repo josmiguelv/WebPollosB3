@@ -17,6 +17,7 @@ type Props = {
   onOpen: (product: B3Product) => void;
   cart: CartItem[];
   total: number;
+  cartArrival: number;
   setQty: (key:string,qty:number) => void;
   delivery: Delivery;
   setDelivery: (value:Delivery) => void;
@@ -84,7 +85,34 @@ function FlipDishPhoto({ product, kind = 'dish', priority = false }: { product: 
   </motion.button>;
 }
 
-export function CartaInmersiva({ data, demo, error, onOpen, cart, total, setQty, delivery, setDelivery, query, setQuery }: Props) {
+/** Animate the visible subtotal only. Cart and checkout always keep the real amount. */
+function AnimatedOrderSubtotal({ total }: { total: number }) {
+  const reduced = useReducedMotion();
+  const [shown, setShown] = useState(total);
+  const shownRef = useRef(total);
+  useEffect(() => {
+    const from = shownRef.current;
+    if (Math.abs(from - total) < .005) { shownRef.current = total; setShown(total); return; }
+    if (reduced) { shownRef.current = total; setShown(total); return; }
+    let frame = 0;
+    let start: number | null = null;
+    const duration = 460;
+    const animate = (time: number) => {
+      if (start === null) start = time;
+      const progress = Math.min(1, (time - start) / duration);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      const next = progress === 1 ? total : Math.round((from + (total - from) * eased) * 100) / 100;
+      shownRef.current = next;
+      setShown(next);
+      if (progress < 1) frame = window.requestAnimationFrame(animate);
+    };
+    frame = window.requestAnimationFrame(animate);
+    return () => window.cancelAnimationFrame(frame);
+  }, [total, reduced]);
+  return <span className="b3-ci-amount-number" aria-hidden="true">{soles(shown)}</span>;
+}
+
+export function CartaInmersiva({ data, demo, error, onOpen, cart, total, cartArrival, setQty, delivery, setDelivery, query, setQuery }: Props) {
   const [purchaseOpen,setPurchaseOpen]=useState(false);
   const cartCount=cart.reduce((sum,item)=>sum+item.qty,0);
   const openPurchase=()=>{setPurchaseOpen(true);window.scrollTo({top:0,behavior:'instant'});};
@@ -223,7 +251,15 @@ export function CartaInmersiva({ data, demo, error, onOpen, cart, total, setQty,
       </section>
       <footer className="b3-ci-endnote"><img src="/brand/pollos-b3-logo.png" alt=""/><span>POLLOS B3 · SANTA ANITA</span>{!B3_CARTA_PILOT && <><p>Vuelve al inicio para explorar la experiencia completa.</p><SiteLink to="/">Ir a Inicio <ArrowLeft size={16}/></SiteLink></>}</footer>
     </div>
-    {cartCount>0&&!categorySheet&&<button type="button" className="b3-ci-buybar" onClick={openPurchase} aria-label={"Ver mi pedido, "+cartCount+" productos"}><span><b>{cartCount}</b> Ver mi pedido</span><strong>{soles(total)} <span aria-hidden="true">→</span></strong></button>}
+    {cartCount>0&&!categorySheet&&<button type="button" className="b3-ci-buybar" onClick={openPurchase} aria-label={"Ver mi pedido, "+cartCount+" productos, subtotal "+soles(total)}>
+      <span><b>{cartCount}</b> Ver mi pedido</span>
+      <strong className="b3-ci-buybar-amount" aria-label={"Subtotal "+soles(total)}>
+        <AnimatedOrderSubtotal total={total}/>
+        <span className="b3-ci-buybar-arrow" aria-hidden="true">→</span>
+        {cartArrival > 0 && <span key={cartArrival} className="b3-ci-cart-vapor" aria-hidden="true"><i/><i/><i/></span>}
+      </strong>
+      {cartArrival > 0 && <span key={cartArrival} className="b3-ci-cart-confirmation" aria-hidden="true">Añadido al pedido <Check size={13}/></span>}
+    </button>}
     <AnimatePresence>{showTop && !categorySheet && <motion.button type="button" className="b3-ci-top" aria-label="Volver arriba" initial={{opacity:0,y:12}} animate={{opacity:1,y:0}} exit={{opacity:0,y:12}} onClick={() => window.scrollTo({top:0,behavior:reduced?'auto':'smooth'})}><ArrowUp size={16}/> Arriba</motion.button>}</AnimatePresence>
     <AnimatePresence>{categorySheet && <motion.div className="b3-ci-sheet-layer" initial={{opacity:0}} animate={{opacity:1}} exit={{opacity:0}}>
       <button className="b3-ci-sheet-backdrop" aria-label="Cerrar categorías" onClick={() => setCategorySheet(false)}/>
