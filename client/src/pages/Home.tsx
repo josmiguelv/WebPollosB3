@@ -3,6 +3,8 @@ import type { ReactNode } from 'react';
 import { AnimatePresence, LayoutGroup, motion, useReducedMotion } from 'framer-motion';
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUpRight, Check, CheckCircle2, ChevronDown, ChevronLeft, ChevronRight, CircleHelp, Clock3, Flame, Heart, Instagram, MapPin, Menu, MessageCircle, Minus, Navigation, Plus, RotateCcw, Search, ShoppingBag, Sparkles, Store, Truck, UserRound, UtensilsCrossed, X } from 'lucide-react';
 import { B3Catalog, B3Product, B3Story, designFixtures, editorialStories, loadPublicCatalog, soles, referenceMedia } from '@/lib/storefront/catalog';
+import { applyMobileConfig, mergeProductsAdditively } from '@/lib/storefront/mobile-config-adapter';
+import { loadMobileConfig, cacheMobileProducts, readCachedMobileProducts } from '@/lib/storefront/mobile-config';
 import { SpinCanvas } from '@/features/menu/SpinCanvas';
 import { SiteLink, navigate, useRoute, pageTitles, B3_CARTA_PILOT } from '@/lib/navigation';
 import { AboutPage, AccountPage, CartPage, CheckoutPage, CommercialHero, FeaturedIntro, HelpPage, HomePathways, NotFoundPage, OrdersPage, PromotionsPage } from './CommercialViews';
@@ -19,16 +21,52 @@ const labelFor = (s: string) => s.toUpperCase();
 const panelIn = { initial: { opacity: 0, y: 26 }, animate: { opacity: 1, y: 0 }, exit: { opacity: 0, y: 15 }, transition: { duration: .34 } };
 
 function usePublicStore() {
-  const demo = import.meta.env.DEV || import.meta.env.VITE_B3_ENABLE_DESIGN_PREVIEW === 'true';
-  const [value, setValue] = useState<B3Catalog | null>(demo ? designFixtures : null);
+  const preview = import.meta.env.DEV || import.meta.env.VITE_B3_ENABLE_DESIGN_PREVIEW === 'true';
+  const blank: B3Catalog = { products: [], categories: [], stories: [], stores: [] };
+  const [value, setValue] = useState<B3Catalog>(() => {
+    const cached = readCachedMobileProducts();
+    return mergeProductsAdditively(preview ? designFixtures : blank, cached.products, cached.categories);
+  });
   const [error, setError] = useState('');
   const [connected, setConnected] = useState(false);
   useEffect(() => {
     const abort = new AbortController();
-    loadPublicCatalog(abort.signal).then(res => { if (res) { setValue(res); setConnected(true); setError(''); } }).catch(err => { if (!abort.signal.aborted) setError(err instanceof Error ? err.message : 'No se pudo consultar la carta.'); });
+    const synchronize = async () => {
+      // Fetch both public sources independently, then merge deterministically.
+      // In particular, an older catalog must never overwrite mobile stores/products.
+      const [catalog, mobile] = await Promise.allSettled([
+        loadPublicCatalog(abort.signal),
+        loadMobileConfig(abort.signal),
+      ]);
+      if (abort.signal.aborted) return;
+      let next: B3Catalog = preview ? designFixtures : { products: [], categories: [], stories: [], stores: [] };
+      if (catalog.status === 'fulfilled' && catalog.value) {
+        const existing = catalog.value;
+        next = mergeProductsAdditively(
+          { ...next, stores: existing.stores, stories: existing.stories, comboDiscounts: existing.comboDiscounts },
+          existing.products, existing.categories,
+        );
+      }
+      const cached = readCachedMobileProducts();
+      next = mergeProductsAdditively(next, cached.products, cached.categories);
+      if (mobile.status === 'fulfilled') {
+        // A ready config is authoritative ONLY for stores. Product ids are additive.
+        next = applyMobileConfig(next, mobile.value);
+        cacheMobileProducts(mobile.value);
+        setConnected(true);
+        setError('');
+      } else {
+        setConnected(catalog.status === 'fulfilled' && catalog.value !== null);
+        setError('No se pudo sincronizar la configuración móvil: '
+          + (mobile.reason instanceof Error ? mobile.reason.message : 'API temporalmente no disponible.'));
+      }
+      setValue(next);
+    };
+    void synchronize();
     return () => abort.abort();
-  }, []);
-  return { data: value, demo: demo && !connected, connected, error };
+  }, [preview]);
+  const demo = value.products.some(product => product.id.startsWith('demo-'));
+  return { data: value, demo, connected, error };
 }
 
 function usePersistentCart() {
@@ -287,7 +325,7 @@ function LocationPicker({ data, close, set }: { data: B3Catalog | null; close: (
     navigator.geolocation.getCurrentPosition(pos => { setLocating(false); setCoords({ latitude: pos.coords.latitude, longitude: pos.coords.longitude }); setError('Ubicación aproximada detectada. Completa y confirma la dirección de entrega.'); }, () => { setLocating(false); setError('No pudimos obtener tu ubicación. Ingresa tu dirección manualmente.'); }, { timeout: 11000, enableHighAccuracy: true, maximumAge: 60000 });
   };
   return <div className="b3-overlay" role="presentation" onMouseDown={close}><section className="selector-modal" role="dialog" aria-modal="true" aria-labelledby="location-title" onMouseDown={e=>e.stopPropagation()}><button className="floating-close" onClick={close} aria-label="Cerrar"><X/></button><span className="section-index">ELIGE TU EXPERIENCIA</span><h2 id="location-title">¿Cómo quieres<br/><i>disfrutar B3?</i></h2><div className="delivery-toggle"><button className={mode==='delivery'?'selected':''} onClick={()=>setMode('delivery')}><Truck size={24}/><b>Delivery</b><span>Te lo llevamos</span></button><button className={mode==='pickup'?'selected':''} onClick={()=>setMode('pickup')}><Store size={24}/><b>Recojo</b><span>Tú eliges dónde</span></button></div>
-  {mode==='delivery' ? <div className="location-form"><label>Tu dirección de entrega<input value={address} onChange={e=>setAddress(e.target.value)} placeholder="Calle, número y referencia"/></label><button className="text-inline-button" onClick={getLocation} disabled={locating}><Navigation size={17}/>{locating?'Obteniendo ubicación…':'Usar ubicación actual'}</button>{error && <p className="form-note" role="status">{error}</p>}{coords && <small>Coordenadas aproximadas obtenidas. El punto debe validarse antes de calcular cobertura.</small>}</div> : <div className="location-form"><label>Elige un local<select value={storeId} onChange={e=>setStoreId(e.target.value)}><option value="">Seleccionar sede</option>{(data?.stores || []).filter(x=>x.available!==false).map(s=><option key={s.id} value={s.id}>{s.name}</option>)}</select></label>{!data?.stores?.length && <p className="form-note">Los locales se mostrarán al conectar administración.</p>}</div>}
+  {mode==='delivery' ? <div className="location-form"><label>Tu dirección de entrega<input value={address} onChange={e=>setAddress(e.target.value)} placeholder="Calle, número y referencia"/></label><button className="text-inline-button" onClick={getLocation} disabled={locating}><Navigation size={17}/>{locating?'Obteniendo ubicación…':'Usar ubicación actual'}</button>{error && <p className="form-note" role="status">{error}</p>}{coords && <small>Coordenadas aproximadas obtenidas. El punto debe validarse antes de calcular cobertura.</small>}</div> : <div className="location-form"><label>Elige un local<select value={storeId} onChange={e=>setStoreId(e.target.value)}><option value="">Seleccionar sede</option>{(data?.stores || []).filter(x=>x.available!==false && x.pickupEnabled!==false).map(s=><option key={s.id} value={s.id}>{s.name} — {s.address}</option>)}</select></label>{!data?.stores?.length && <p className="form-note">Los locales se mostrarán al conectar administración.</p>}</div>}
   <button className="b3-pill b3-pill--red location-confirm" disabled={mode==='delivery'?address.trim().length<5:!storeId} onClick={()=>{set({mode,address:address.trim(),storeId,coords}); close();}}>GUARDAR PREFERENCIA <ArrowRight size={17}/></button><p className="location-legal">La cobertura, la disponibilidad y el costo de entrega se verificarán en el servidor antes de aceptar un pedido.</p></section></div>;
 }
 

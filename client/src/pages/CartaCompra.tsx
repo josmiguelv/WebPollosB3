@@ -21,7 +21,7 @@ export function CartaCompra({cart,total,data,delivery,demo,setQty,setDelivery,on
   const reduced = useReducedMotion();
   const index = steps.indexOf(step);
   const count = cart.reduce((sum,item)=>sum+item.qty,0);
-  const stores = (data?.stores || []).filter(s=>s.available!==false);
+  const stores = (data?.stores || []).filter(s=>s.available!==false && s.pickupEnabled!==false);
   const store = stores.find(s=>s.id===storeId);
   const validDestination = mode==='delivery' ? address.trim().length>=5 : !!store;
   const validContact = person.name.trim().length>=3 && /^[+]?[0-9 -]{8,16}$/.test(person.phone.trim()) && (!person.email || /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(person.email));
@@ -66,7 +66,7 @@ export function CartaCompra({cart,total,data,delivery,demo,setQty,setDelivery,on
           <label>Referencia (opcional)<input value={reference} onChange={e=>setReference(e.target.value)} placeholder="Piso, casa o referencia"/></label>
           <p>El costo del reparto y la cobertura todavía están pendientes de validación.</p>
         </div>:<div className="b3-ci-buyflow-fields">
-          <label>Local de recojo<select value={storeId} onChange={e=>setStoreId(e.target.value)}><option value="">Selecciona un local</option>{stores.map(s=><option key={s.id} value={s.id}>{s.name}</option>)}</select></label>
+          <label>Local de recojo<select value={storeId} onChange={e=>setStoreId(e.target.value)}><option value="">Selecciona un local</option>{stores.map(s=><option key={s.id} value={s.id}>{s.name} — {s.address}</option>)}</select></label>
           {!stores.length&&<p>Los locales oficiales aparecerán cuando se conecte el administrador.</p>}
         </div>}
       </>}

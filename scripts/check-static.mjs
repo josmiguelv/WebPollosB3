@@ -75,3 +75,7 @@ for (const name of ['Home.tsx','CartaInmersiva.tsx','CartaCompra.tsx','VideoGiro
 // Regression: the demo flag must be passed explicitly into Stories.
 assert.ok(home.includes('function Stories({ stories, onProduct, demo }'), 'Historias reciben demo');
 assert.ok(home.includes('onProduct={openById} demo={demo}/>'), 'Home pasa la señal de demostración');
+
+// Configuración móvil sin modificar la estructura de Carta ni los productos de demostración.
+assert.ok(home.includes('loadMobileConfig(abort.signal)'), 'La web consulta la API móvil');
+assert.ok(home.includes('applyMobileConfig(next, mobile.value)'), 'Los locales se reemplazan y los productos se fusionan');

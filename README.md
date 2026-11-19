@@ -131,3 +131,17 @@ Los 14 archivos WebP optimizados **ya están publicados en GitHub**, en `client/
 Reparado el cambio de sección «Menú / Combos / Bebidas»: el desplazamiento **vertical** mueve únicamente el documento, mientras que la barra de chips se centra mediante su propio desplazamiento **horizontal**. Desde el selector inferior se espera a que se cierre antes de navegar. Se conserva la selección activa durante la animación para que no marque otra categoría temporalmente. Todas las fotografías de `/menu/` se muestran con `object-fit: contain` y escala 94 % para que la presentación quede completa, sin ampliar o recortar el plato.
 
 Las caras posteriores de las fotografías ahora tienen título, descripción breve según el tipo de plato, ingredientes derivados **solo** del nombre proporcionado y precio marcado como referencial en el modo demo. La ficha de compra, tarjeta única por fila, video y animaciones continúan intactos.
+
+## Integración de API móvil de Pollos B3 (v1.3.0)
+
+**Fuente de datos:** `GET https://surprise-kong-stories-brand.trycloudflare.com/api/v1/mobile/config?appId=com.integrab2g.pollosb3` (sin credenciales). El endpoint expuesto mediante Quick Tunnel puede cambiar o expirar. Para apuntar al dominio HTTPS definitivo, configurar `VITE_B3_MOBILE_CONFIG_URL` en el entorno Vite.
+
+**Semántica exacta:** cuando `ready=true`, el `appId` coincide y la respuesta es válida, `stores` **reemplaza por completo** las sedes visibles (incluso si trae una lista vacía); no se conservan locales antiguos. `products` se aplica por ID como **upsert aditivo**, sin eliminar ninguno que falte en la respuesta. Las categorías existentes se mantienen; categorías nuevas se agregan. Se retiene en `localStorage` una caché aditiva **solo de productos**, para sobrevivir una actualización o recarga del mismo navegador; no sustituye una base de datos y no se comparten registros entre usuarios.
+
+**Ejemplo suministrado (revisión 8):** `Nogales`, ID `0221b719-195a-45f9-a54a-08e4ef56625c`, `Av. Argentina 1653, Callao 07001`, cobertura 5 km, delivery por km S/ 2.50. Producto nuevo `prueba`, ID `be8383ff-eed2-424f-856d-b5606e9262f2`, categoría `Pollo`, S/ 13.00. Son datos obtenidos de la API; no se crean promociones ni otras sedes.
+
+**Pantalla:** en la Carta piloto local de desarrollo, los 14 productos referenciales permanecen y se añade el producto remoto, siempre que la API responda. El selector de recojo muestra los locales y direcciones oficiales. No se habilitan pedidos reales ni pagos. Las imágenes relativas `/api/v1/mobile/images/<id>` se resuelven contra la API y usan proxy local de Vite para evitar CORS durante `npm run dev`.
+
+**En desarrollo:** Vite proxy mismo origen `/b3-mobile-config` y `/b3-mobile-images`. **En despliegue estático:** el navegador llama a HTTPS público directamente, y el servidor API debe permitir solicitudes CORS desde el dominio web, o debe configurarse un proxy de mismo origen. No se almacenan claves de administración ni se intenta escribir en el administrador: GET solo modifica el estado visual de la web.
+
+**Verificar:** `npm run check:static`, `npm run check`, `npm run build`. Si falla la API, los productos existentes permanecen y se muestra un aviso; nunca se elimina la lista de locales por un error de red o contrato.
