@@ -118,7 +118,7 @@ function FlipDishPhoto({ product, kind = 'dish', priority = false }: { product: 
     aria-pressed={flipped} onClick={() => setFlipped(previous => !previous)}>
     <div className={'b3-ci-flip-inner' + (flipped ? ' is-flipped' : '')}>
       <div className={'b3-ci-flip-face b3-ci-flip-front' + (kind === 'lead' ? ' b3-ci-lead-photo' : '')}>
-        <DishPhoto product={product} priority={priority} label videoActive={kind === 'dish' && !flipped}/>
+        <DishPhoto product={product} priority={priority} label videoActive={kind === 'lead' && !flipped}/>
         <span className="b3-ci-flip-hint" aria-hidden="true">↻ QUÉ INCLUYE</span>
         {kind !== 'dish' && <span className={kind === 'lead' ? 'b3-ci-price-pill' : 'b3-ci-small-price'}>{price === null ? 'Consultar' : soles(price)}</span>}
       </div>
@@ -188,7 +188,11 @@ export function CartaInmersiva({ data, demo, error, onOpen, cart, total, cartArr
   const products = data?.products ?? [];
   const categories = data?.categories ?? [];
   const matching = useMemo(() => products.filter(product => `${product.name} ${product.description}`.toLocaleLowerCase('es-PE').includes(query.trim().toLocaleLowerCase('es-PE'))), [products, query]);
-  const lead = products.find(p => p.featured && p.available && minPrice(p) !== null) ?? products.find(p => p.available && minPrice(p) !== null);
+  // La Carta piloto abre con el último video facilitado por el cliente.
+  // Solo la demo usa esta preferencia: los productos oficiales conservan su orden.
+  const lead = products.find(p => p.id === STEAM_COMBO_ID && p.available && minPrice(p) !== null)
+    ?? products.find(p => p.featured && p.available && minPrice(p) !== null)
+    ?? products.find(p => p.available && minPrice(p) !== null);
   const discoveries = products.filter(p => p.available && p.id !== lead?.id && minPrice(p) !== null).slice(0, 7);
   const categoryEntries = categories.map(category => ({ ...category, products: matching.filter(product => product.categoryId === category.id) }));
   const remaining = matching.filter(product => !categories.some(category => category.id === product.categoryId));
@@ -272,12 +276,11 @@ export function CartaInmersiva({ data, demo, error, onOpen, cart, total, cartArr
       {demo && <p className="b3-ci-design-notice">VISTA DE DISEÑO · PRODUCTOS, FOTOS Y PRECIOS REFERENCIALES. SIN PEDIDOS REALES.</p>}
       {!query && <>
         <div className="b3-ci-introduction"><span>CARTA DE HOY</span><strong>· Pollos B3</strong><small>Santa Anita, Lima</small></div>
-        {B3_CARTA_PILOT && <a className="b3-ci-video-shortcut" href="#b3-video-giro"><Clapperboard size={17} aria-hidden="true"/> VER EL PLATO EN MOVIMIENTO <span aria-hidden="true">↓</span></a>}
         {lead && <section className="b3-ci-lead" aria-labelledby="b3-ci-lead-title">
+          <FlipDishPhoto product={lead} kind="lead" priority/>
           <p className="b3-ci-pretitle">ELIGE A TU MANERA</p>
           <h1 id="b3-ci-lead-title">{lead.name}</h1>
           <p className="b3-ci-lead-description">{lead.description}</p>
-          <FlipDishPhoto product={lead} kind="lead" priority/>
           <div className="b3-ci-lead-actions"><button className="b3-ci-primary" onClick={() => onOpen(lead)} disabled={!available(lead)}>Elegir · {minPrice(lead) === null ? 'Consultar' : soles(minPrice(lead)!)} <Plus size={18}/></button><button className="b3-ci-secondary" onClick={() => onOpen(lead)}>Ver detalles</button></div>
         </section>}
         {B3_CARTA_PILOT && <VideoGiroDemo fallbackImage={lead?.imageUrl}/>}

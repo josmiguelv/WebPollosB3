@@ -391,3 +391,8 @@
 @media(prefers-reduced-motion:reduce){
   .b3-website--menu .b3-ci-steam-product-video{animation:none}
 }
+
+/* El video de vapor ocupa el primer espacio visual de Carta, sin cambiar la
+   estructura vertical existente ni las dimensiones de la tarjeta destacada. */
+.b3-website--menu .b3-ci-lead>.b3-ci-flip-photo{margin-top:0}
+.b3-website--menu .b3-ci-lead>.b3-ci-flip-photo+.b3-ci-pretitle{margin-top:20px}

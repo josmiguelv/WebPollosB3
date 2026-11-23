@@ -88,7 +88,7 @@ console.log('Categoria: ejes de scroll separados; fotos completas y reverso refi
 const silentMenuVideo = fs.readFileSync('client/src/pages/CartaInmersiva.tsx','utf8');
 assert.ok(silentMenuVideo.includes("const STEAM_COMBO_ID = 'demo-combo-entero-medio'"), 'Video solamente en combo correspondiente');
 assert.ok(silentMenuVideo.includes('function SilentSteamProductVideo('), 'Video reemplaza fotografía dentro de la tarjeta existente');
-assert.ok(silentMenuVideo.includes('kind === \'dish\' && !flipped'), 'No se reproduce al girar ni en otros carruseles');
+assert.ok(silentMenuVideo.includes('kind === \'lead\' && !flipped'), 'El video aparece al inicio y se pausa al girar, sin duplicarse en la categoría');
 assert.ok(silentMenuVideo.includes('muted playsInline loop'), 'Video explícitamente silencioso y apto para móvil');
 assert.ok(silentMenuVideo.includes('video.muted = true'), 'Silencio reforzado en reproducción');
 assert.ok(silentMenuVideo.includes("document.addEventListener('visibilitychange', sync)"), 'Pausa al ocultar pestaña');
@@ -96,3 +96,13 @@ assert.ok(silentMenuVideo.includes('new IntersectionObserver('), 'Reproduce solo
 assert.ok(silentMenuVideo.includes('onError={() => setFailed(true)}'), 'Recupera fotografía si falla MP4');
 assert.ok(styles.includes('.b3-ci-steam-product-video'), 'Respeta tamaño de fotografía anterior');
 console.log('PASS: nuevo video silencioso en una foto y estructura de compra intacta.');
+
+const steamLeadSource = carta.slice(carta.indexOf('const products ='),carta.indexOf('const discoveries ='));
+assert.ok(steamLeadSource.includes("p.id === STEAM_COMBO_ID"), 'El combo del video aparece primero en la Carta piloto');
+const leadRendering = carta.slice(carta.indexOf('{lead && <section className="b3-ci-lead"'),carta.indexOf('B3_CARTA_PILOT && <VideoGiroDemo'));
+assert.ok(leadRendering.indexOf('<FlipDishPhoto product={lead} kind="lead" priority/>') <
+  leadRendering.indexOf('id="b3-ci-lead-title"'), 'El video es lo primero que se ve del producto destacado');
+assert.ok(!carta.includes('href="#b3-video-giro"'), 'No enviar al cliente a otro video antes del destacado');
+assert.ok(carta.includes('const discoveries = products.filter(p => p.available && p.id !== lead?.id'), 'El video destacado no se duplica en Descubrir');
+assert.ok(carta.includes('categoryEntries.filter(cat => cat.products.length > 0)'), 'Menú y Combos siguen disponibles');
+console.log('PASS: el video silencioso es la primera imagen de la Carta, sin alterar las compras.');
