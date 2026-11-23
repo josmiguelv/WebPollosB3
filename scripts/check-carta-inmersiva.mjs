@@ -37,7 +37,7 @@ assert.ok(giro.includes('IntersectionObserver') && giro.includes('video.pause()'
 assert.ok(giro.includes('mediaError') && giro.includes('fallbackImage'),'Fallback si falta video');
 assert.ok(giro.includes('!reduced') && giro.includes('loop muted playsInline'),'Accesibilidad y reproducción silenciosa');
 assert.ok(carta.includes('B3_CARTA_PILOT && <VideoGiroDemo'),'Video visible durante el piloto, sin depender del catálogo demo');
-assert.ok(carta.includes('href="#b3-video-giro"'),'Acceso visible al video desde el inicio');
+assert.ok(carta.includes('const lead = products.find(p => p.id === STEAM_COMBO_ID'), 'El video de vapor se muestra primero al entrar a la Carta');
 assert.ok(giro.includes('id="b3-video-giro"'),'Ancla de video');
 const clip = fs.statSync('client/public/media/b3-giro-demo.mp4');
 const poster = fs.statSync('client/public/media/b3-giro-poster.webp');
