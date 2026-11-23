@@ -38,8 +38,8 @@
 .b3-website--menu .b3-ci-introduction>small {display:block;width:100%;font-size:14px;color:var(--ci-muted);margin-top:4px}
 .b3-website--menu .b3-ci-lead {margin:10px 0 46px}
 .b3-website--menu .b3-ci-pretitle {font-size:10px;letter-spacing:.18em;font-weight:800;color:var(--ci-accent);margin:22px 0 8px}
-.b3-website--menu .b3-ci-lead h1 {font:800 clamp(2rem,6vw,3rem)/1.03 Montserrat,sans-serif;letter-spacing:-.07em;color:var(--ci-fg);margin:0 0 14px}
-.b3-website--menu .b3-ci-lead-description {font-size:15px;line-height:1.58;color:var(--ci-muted);margin:0 0 18px}
+.b3-website--menu .b3-ci-lead h1 {font:750 21px/1.28 'DM Sans',sans-serif;letter-spacing:-.025em;color:var(--ci-fg);margin:0 0 14px}
+.b3-website--menu .b3-ci-lead-description {font-family:'DM Sans',sans-serif;font-weight:450;font-size:13px;line-height:1.5;letter-spacing:0;color:var(--ci-muted);margin:0 0 18px}
 .b3-website--menu .b3-ci-lead-photo-button {display:block;width:100%;border:0;background:transparent;padding:0;border-radius:23px;overflow:hidden;text-align:left}
 .b3-website--menu .b3-ci-lead-photo {position:relative;width:100%;aspect-ratio:1.32;background:#09090a;overflow:hidden;border-radius:23px}
 .b3-website--menu .b3-ci-photo {width:100%;height:100%;position:relative;background:radial-gradient(ellipse at 50% 39%,#502619,#080808 70%);overflow:hidden}
@@ -120,7 +120,7 @@
 .b3-website--menu .b3-ci-sheet-category small {display:flex;align-items:center;gap:5px;color:var(--ci-accent);font-weight:800}
 .b3-website--menu .b3-ci-large-text .b3-ci-dish-copy>p {font-size:17px}
 .b3-website--menu .b3-ci-large-text .b3-ci-dish-copy h4 {font-size:25px}
-.b3-website--menu .b3-ci-large-text .b3-ci-lead-description {font-size:19px}
+.b3-website--menu .b3-ci-large-text .b3-ci-lead-description {font-size:16px}
 .b3-website--menu .b3-ci-large-text .b3-ci-chips button {font-size:16px}
 @media(min-width:800px){.b3-website--menu .b3-ci-top {left:calc(50% - 305px)}}
 @media(max-width:680px){
@@ -134,7 +134,7 @@
  .b3-website--menu .b3-ci-introduction{padding:18px 0 8px}
  .b3-website--menu .b3-ci-introduction>span{font-size:20px}
  .b3-website--menu .b3-ci-introduction>strong{font-size:14px}
- .b3-website--menu .b3-ci-lead h1{font-size:clamp(1.9rem,7vw,2.6rem)}
+ .b3-website--menu .b3-ci-lead h1{font-size:19px}
  .b3-website--menu .b3-ci-lead-photo{aspect-ratio:1.18;border-radius:19px}
  .b3-website--menu .b3-ci-lead-photo-button{border-radius:19px}
  .b3-website--menu .b3-ci-price-pill{font-size:14px;padding:8px 11px}

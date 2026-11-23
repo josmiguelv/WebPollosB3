@@ -106,3 +106,12 @@ assert.ok(!carta.includes('href="#b3-video-giro"'), 'No enviar al cliente a otro
 assert.ok(carta.includes('const discoveries = products.filter(p => p.available && p.id !== lead?.id'), 'El video destacado no se duplica en Descubrir');
 assert.ok(carta.includes('categoryEntries.filter(cat => cat.products.length > 0)'), 'Menú y Combos siguen disponibles');
 console.log('PASS: el video silencioso es la primera imagen de la Carta, sin alterar las compras.');
+
+// La tarjeta destacada y el video editorial usan la misma escala de tipografía que el resto del menú.
+const videoTypography = fs.readFileSync('client/src/pages/video-giro-demo.css','utf8');
+assert.ok(styles.includes(".b3-ci-lead h1 {font:750 21px/1.28 'DM Sans',sans-serif"), 'El título del destacado mantiene escala de tarjeta');
+assert.ok(styles.includes('.b3-ci-lead h1{font-size:19px}'), 'El título del destacado no crece en móvil');
+assert.ok(videoTypography.includes(".b3-ci-motion-head h2{font:750 21px/1.28 'DM Sans',sans-serif"), 'El título del video usa la misma escala');
+assert.ok(videoTypography.includes('.b3-ci-motion-head h2{font-size:19px}'), 'El título del video se ajusta a móvil');
+assert.ok(styles.includes(".b3-ci-lead-description {font-family:'DM Sans',sans-serif"), 'Descripción de destacado coherente con Carta');
+console.log('PASS: tipografía premium compacta; estructura visual y compra sin cambios.');
