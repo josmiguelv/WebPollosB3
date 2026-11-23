@@ -159,3 +159,11 @@ El dominio `earthquake-represents-hiv-valentine.trycloudflare.com` está autoriz
 **Importante:** después de `git pull origin main`, hay que **detener el proceso anterior de Vite que ocupa el puerto 4321** y ejecutar `npm run dev` de nuevo. No basta abrir otra ventana: la segunda instancia falla con `Port 4321 is already in use` y seguirá sirviendo la configuración antigua. Conserva abierto `cloudflared tunnel --url http://localhost:4321` para mantener el mismo enlace público.
 
 Si Cloudflare asigna otro nombre de dominio, autorizarlo con `$env:__VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS="nuevo-dominio.trycloudflare.com"` **en la misma terminal que va a iniciar Vite** antes de ejecutar `npm run dev`.
+
+## Motor de pedidos Android reutilizado para Web — base aislada v1.3.2
+
+Se incorporó la lógica original del branch móvil `feat/b3-premium-animated-toasts-20261123` a `client/public/b3-order-availability-android.js`, con **solo** el almacenamiento de la interacción cambiado a `sessionStorage` (sin persistir nombres, teléfonos y claves del pedido en `localStorage`). Su contrato `FORM` vigente usa **Productos**, **Subtotal** y **Dirección y referencia**, no un resumen TEXT. La web no utiliza `AndroidBridge` real: `web-order-transport.ts` suministra un puente HTTPS de navegador que reenvía exclusivamente los endpoints públicos del Administrador, con idempotencia, `X-Order-Access-Key`, sin cookies administrativas ni credenciales de TU VERSO.
+
+`/b3-mobile-api` se proxifica hacia `/api/v1/mobile` del Administrador **solo con Vite en desarrollo**. Hosting estático definitivo requiere API HTTPS con CORS aprobado o proxy de mismo origen. No publicar este acceso mediante `allowedHosts:true` ni modificar TU VERSO.
+
+**Aún no se activa el envío real desde el checkout**: el piloto de Carta, su diseño, FORM y carrito actual siguen protegidos mientras se verifica el flujo completo de aceptación/rechazo. `VITE_B3_WEB_ORDER_ENABLED=false` por defecto. Los productos de prueba sin UUID publicado nunca podrán formar pedidos reales. 

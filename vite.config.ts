@@ -16,6 +16,10 @@ export default defineConfig(({ mode }) => {
       target: origin, changeOrigin: true, secure: true,
       rewrite: (url: string) => url.replace(/^\/b3-mobile-config/, '/api/v1/mobile/config'),
     },
+    '/b3-mobile-api': {
+      target: origin, changeOrigin: true, secure: true,
+      rewrite: (url: string) => url.replace(/^\/b3-mobile-api/, '/api/v1/mobile'),
+    },
     '/b3-mobile-images': {
       target: origin, changeOrigin: true, secure: true,
       rewrite: (url: string) => url.replace(/^\/b3-mobile-images/, '/api/v1/mobile/images'),
