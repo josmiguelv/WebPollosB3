@@ -84,3 +84,15 @@ assert.ok(styles.includes('object-fit:contain;'), 'Fotografias sin recortes');
 console.log('Categoria: ejes de scroll separados; fotos completas y reverso refinado: PASS');
 
 // Pruebas del nuevo efecto separadas para mantener este archivo legible.
+
+const silentMenuVideo = fs.readFileSync('client/src/pages/CartaInmersiva.tsx','utf8');
+assert.ok(silentMenuVideo.includes("const STEAM_COMBO_ID = 'demo-combo-entero-medio'"), 'Video solamente en combo correspondiente');
+assert.ok(silentMenuVideo.includes('function SilentSteamProductVideo('), 'Video reemplaza fotografía dentro de la tarjeta existente');
+assert.ok(silentMenuVideo.includes('kind === \'dish\' && !flipped'), 'No se reproduce al girar ni en otros carruseles');
+assert.ok(silentMenuVideo.includes('muted playsInline loop'), 'Video explícitamente silencioso y apto para móvil');
+assert.ok(silentMenuVideo.includes('video.muted = true'), 'Silencio reforzado en reproducción');
+assert.ok(silentMenuVideo.includes("document.addEventListener('visibilitychange', sync)"), 'Pausa al ocultar pestaña');
+assert.ok(silentMenuVideo.includes('new IntersectionObserver('), 'Reproduce solo si está visible');
+assert.ok(silentMenuVideo.includes('onError={() => setFailed(true)}'), 'Recupera fotografía si falla MP4');
+assert.ok(styles.includes('.b3-ci-steam-product-video'), 'Respeta tamaño de fotografía anterior');
+console.log('PASS: nuevo video silencioso en una foto y estructura de compra intacta.');

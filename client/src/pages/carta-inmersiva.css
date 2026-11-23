@@ -369,3 +369,25 @@
   .b3-website--menu .b3-ci-cart-vapor{display:none}
   .b3-website--menu .b3-ci-cart-confirmation{animation:none;opacity:1}
 }
+
+
+/* Carta B3: nuevo video de vapor en lugar de la foto de un solo combo.
+   Mantiene el mismo ancho/alto de tarjeta y su efecto de giro. */
+.b3-website--menu .b3-ci-photo--video{
+  background:radial-gradient(ellipse at 50% 50%,#33302e,#09090a 72%);
+}
+.b3-website--menu .b3-ci-steam-product-video{
+  display:block;width:100%;height:100%;object-fit:contain;
+  object-position:center center;background:transparent;pointer-events:none;
+}
+.b3-website--menu .b3-ci-steam-video-badge{
+  position:absolute;left:11px;top:11px;z-index:5;
+  display:inline-flex;align-items:center;gap:5px;
+  padding:6px 9px;border-radius:8px;
+  color:#fff;background:#15120fcb;border:1px solid #ffffff40;
+  font:800 9px 'DM Sans',sans-serif;letter-spacing:.055em;
+  pointer-events:none;
+}
+@media(prefers-reduced-motion:reduce){
+  .b3-website--menu .b3-ci-steam-product-video{animation:none}
+}

@@ -171,3 +171,9 @@ Se incorporó la lógica original del branch móvil `feat/b3-premium-animated-to
 ### Reglas de validación comercial importadas desde Android
 
 `web-order-flow.ts` valida productos UUID publicados y revisión del catálogo. Para Delivery consulta tarifa y sede al Administrador y, si la sede exige agente, crea una interacción idempotente y envía `FORM` exactamente con tres campos. El estado `ACCEPTED` técnico no aprueba la compra: solo los mensajes comerciales OUTBOUND del agente permiten avanzar. Recojo valida la sede sin crear interacción. El pago real sigue bloqueado. La lógica todavía se mantiene separada del JSX, con `VITE_B3_WEB_ORDER_ENABLED=false`.
+
+## Carta B3 — video de vapor en tarjeta de combo (v1.3.3)
+
+Dentro de la categoría **Combos**, la fotografía del producto de demostración `demo-combo-entero-medio` (1 pollo + 1/2 pollo + papas + ensalada + cremas + Pepsi 1.5 L) se sustituye por el video aportado por el usuario, **sin añadir ninguna tarjeta ni sección nueva**. Conserva la misma altura de imagen, el botón «Elegir y agregar» y el giro FLIP al tocar la imagen. El video se reproduce en bucle, silenciado, únicamente mientras está en pantalla y el anverso de la tarjeta es visible; se pausa cuando el usuario gira la tarjeta o cambia de pestaña. Respeta la preferencia de movimiento reducido y utiliza la fotografía original como respaldo cuando el recurso no existe o falla. No aparece en los productos oficiales de la API.
+
+**Instalación del archivo multimedia:** copiar `combo-entero-medio-vapor.mp4` dentro de `client/public/menu/`. El archivo ha sido optimizado sin audio (H.264, 4 s, 174 KB). Si el archivo no se publica todavía, la web conserva la imagen original sin fallos. No es necesario cambiar rutas, precios, carrito o API. La integración se limita a WebPollosB3 y no afecta Android, TU VERSO ni Administrador.

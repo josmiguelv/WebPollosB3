@@ -30,12 +30,70 @@ function minPrice(product: B3Product): number | null {
   return prices.length ? Math.min(...prices) : null;
 }
 
-function DishPhoto({ product, priority = false, label = false }: { product: B3Product; priority?: boolean; label?: boolean }) {
+/** Imagen animada solo para el combo que coincide visualmente con el video entregado.
+ * El MP4 distribuido NO tiene pista de audio. Pausar al salir de la vista,
+ * al girar la tarjeta y cuando se oculta la pestaña.
+ */
+const STEAM_COMBO_ID = 'demo-combo-entero-medio';
+function SilentSteamProductVideo({ poster, active }: { poster?: string; active: boolean }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [failed, setFailed] = useState(false);
+  const reduced = useReducedMotion();
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || failed) return;
+    video.muted = true;
+    if (reduced || !active || typeof IntersectionObserver === 'undefined') {
+      video.pause();
+      return;
+    }
+    let visible = false;
+    const sync = () => {
+      if (visible && active && !document.hidden) {
+        void video.play().catch(() => { /* Autoplay can be blocked; poster remains. */ });
+      } else video.pause();
+    };
+    const observer = new IntersectionObserver(([entry]) => {
+      visible = Boolean(entry?.isIntersecting);
+      sync();
+    }, { threshold: 0.4 });
+    observer.observe(video);
+    document.addEventListener('visibilitychange', sync);
+    return () => {
+      observer.disconnect();
+      document.removeEventListener('visibilitychange', sync);
+      video.pause();
+    };
+  }, [active, reduced, failed]);
+  if (failed) return poster
+    ? <img src={poster} alt="Presentación referencial del combo de pollo" loading="lazy" decoding="async"/>
+    : <div className="b3-ci-photo-fallback"><span>B3</span><small>VIDEO NO DISPONIBLE</small></div>;
+  return <video
+    ref={videoRef}
+    className="b3-ci-steam-product-video"
+    src="/menu/combo-entero-medio-vapor.mp4"
+    poster={poster}
+    muted playsInline loop
+    preload="metadata"
+    disablePictureInPicture
+    aria-hidden="true"
+    onError={() => setFailed(true)}
+  />;
+}
+function DishPhoto({ product, priority = false, label = false, videoActive = false }: {
+  product: B3Product; priority?: boolean; label?: boolean; videoActive?: boolean;
+}) {
   const [failed, setFailed] = useState(false);
   const illustrative = product.id.startsWith('demo-');
-  return <div className="b3-ci-photo">
-    {product.imageUrl && !failed ? <img src={product.imageUrl} alt={illustrative ? `Foto referencial de ${product.name}` : product.name} loading={priority ? 'eager' : 'lazy'} decoding="async" onError={() => setFailed(true)} /> : <div className="b3-ci-photo-fallback" aria-label="Imagen por publicar"><span>B3</span><small>IMAGEN POR PUBLICAR</small></div>}
-    {illustrative && label && <span className="b3-ci-reference">FOTOGRAFÍA REFERENCIAL</span>}
+  const showSteamVideo = product.id === STEAM_COMBO_ID && videoActive;
+  return <div className={'b3-ci-photo' + (showSteamVideo ? ' b3-ci-photo--video' : '')}>
+    {showSteamVideo
+      ? <SilentSteamProductVideo poster={product.imageUrl} active={videoActive}/>
+      : product.imageUrl && !failed
+        ? <img src={product.imageUrl} alt={illustrative ? `Foto referencial de ${product.name}` : product.name} loading={priority ? 'eager' : 'lazy'} decoding="async" onError={() => setFailed(true)} />
+        : <div className="b3-ci-photo-fallback" aria-label="Imagen por publicar"><span>B3</span><small>IMAGEN POR PUBLICAR</small></div>}
+    {showSteamVideo && <span className="b3-ci-steam-video-badge">VIDEO · SIN AUDIO</span>}
+    {illustrative && label && <span className="b3-ci-reference">{showSteamVideo ? 'VIDEO REFERENCIAL' : 'FOTOGRAFÍA REFERENCIAL'}</span>}
     {!product.available && <span className="b3-ci-unavailable">NO DISPONIBLE</span>}
   </div>;
 }
@@ -60,7 +118,7 @@ function FlipDishPhoto({ product, kind = 'dish', priority = false }: { product: 
     aria-pressed={flipped} onClick={() => setFlipped(previous => !previous)}>
     <div className={'b3-ci-flip-inner' + (flipped ? ' is-flipped' : '')}>
       <div className={'b3-ci-flip-face b3-ci-flip-front' + (kind === 'lead' ? ' b3-ci-lead-photo' : '')}>
-        <DishPhoto product={product} priority={priority} label/>
+        <DishPhoto product={product} priority={priority} label videoActive={kind === 'dish' && !flipped}/>
         <span className="b3-ci-flip-hint" aria-hidden="true">↻ QUÉ INCLUYE</span>
         {kind !== 'dish' && <span className={kind === 'lead' ? 'b3-ci-price-pill' : 'b3-ci-small-price'}>{price === null ? 'Consultar' : soles(price)}</span>}
       </div>
