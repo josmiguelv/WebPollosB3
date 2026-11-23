@@ -187,3 +187,17 @@ Requiere conservar `client/public/menu/combo-entero-medio-vapor.mp4` instalado m
 ## Carta v1.3.5 — tipografía compacta, sin rediseño
 
 Corrección estrictamente tipográfica: el nombre del producto destacado (antes hasta 48 px, Montserrat 800) ahora usa **DM Sans 750, 21 px en escritorio y 19 px en móvil**, del mismo orden que las demás tarjetas. El segundo bloque de video utiliza exactamente la misma escala 21/19 px, sin títulos desproporcionados. La descripción principal pasa a 13 px, con interlineado legible de 1.5, y se conserva el ajuste de accesibilidad del texto ampliado. **No se modifica el orden de los elementos, tamaños de imágenes o video, estructura de una tarjeta por fila, botones, efectos de giro, animaciones, carrito ni checkout.**
+
+## Configuración única de las APIs mediante `.env` — versión 1.3.6
+
+La Carta web utiliza **`VITE_B3_API_BASE_URL`** como URL única para el Administrador móvil. Controla locales, productos, imágenes y las rutas de validación de pedidos (estas últimas siguen sin activarse para clientes reales). Ejemplo:
+
+```ini
+VITE_B3_API_BASE_URL=https://surprise-kong-stories-brand.trycloudflare.com
+```
+
+**Primera configuración local en Windows, desde la raíz `WebPollosB3`:** `if (!(Test-Path .env)) { Copy-Item .env.example .env }` y `notepad .env`. El archivo real `.env` queda excluido de Git por seguridad y se conserva entre `git pull`; **solo la plantilla `.env.example` se publica**. No copiar tokens de administrador o de TU VERSO a variables `VITE_*`, porque el navegador puede leerlas.
+
+Al cambiar el túnel, editar únicamente esa línea a la nueva URL HTTPS **sin ruta** (`https://nuevo-host.trycloudflare.com`) y **reiniciar Vite**: `Ctrl+C`, `npm run dev`. El proxy de Vite (configuración, imágenes, pedidos) y el cliente se dirigirán al nuevo origen. Para `npm run build`, el valor se incorpora en la compilación y requiere volver a compilar. Para la API en hosting público se necesita HTTPS y CORS del Administrador o un proxy propio. `VITE_B3_MOBILE_CONFIG_URL` sigue leyéndose como compatibilidad para despliegues anteriores, pero no se necesita en la plantilla nueva.
+
+La variable opcional `VITE_B3_PUBLIC_CATALOG_URL` queda independiente porque representa **otro contrato de catálogo** con una ruta no confirmada; no se inventa su endpoint. No se modifican Android, TU VERSO, Administrador ni el diseño web.

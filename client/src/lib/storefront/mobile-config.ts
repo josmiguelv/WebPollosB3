@@ -1,21 +1,17 @@
 import type { B3Category, B3Product } from './catalog';
+import { getB3MobileApiBase } from './api-base';
 import { normalizeMobileConfig, mergeProductsAdditively, POLLOS_B3_APP_ID } from './mobile-config-adapter';
 import type { B3MobileUpdate } from './mobile-config-adapter';
 
-/** Public, read-only endpoint given for Pollos B3. Cloudflare Quick Tunnel is temporary:
- * configure VITE_B3_MOBILE_CONFIG_URL when the official permanent domain is ready.
- * Never send administrator keys or customer data to this endpoint.
+/** La configuración, sus imágenes y el motor de pedidos usan VITE_B3_API_BASE_URL.
+ * El túnel trycloudflare es temporal; cambiar únicamente la variable del .env.
  */
-export const DEFAULT_MOBILE_CONFIG_URL =
-  'https://surprise-kong-stories-brand.trycloudflare.com/api/v1/mobile/config?appId=com.integrab2g.pollosb3';
 const STORAGE_KEY = 'b3-mobile-products-v1:' + POLLOS_B3_APP_ID;
 type ProductCache = { products: B3Product[]; categories: B3Category[] };
 function configuredEndpoint(): string {
-  const configured = (import.meta.env.VITE_B3_MOBILE_CONFIG_URL as string | undefined)?.trim() || DEFAULT_MOBILE_CONFIG_URL;
-  const parsed = new URL(configured);
-  if (parsed.protocol !== 'https:') throw new Error('La API de configuración móvil requiere HTTPS.');
-  parsed.searchParams.set('appId', POLLOS_B3_APP_ID);
-  return parsed.href;
+  const endpoint = new URL(getB3MobileApiBase() + '/config');
+  endpoint.searchParams.set('appId', POLLOS_B3_APP_ID);
+  return endpoint.href;
 }
 export async function loadMobileConfig(signal?: AbortSignal): Promise<B3MobileUpdate> {
   const endpoint = configuredEndpoint();

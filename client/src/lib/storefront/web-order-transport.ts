@@ -1,4 +1,4 @@
-import { DEFAULT_MOBILE_CONFIG_URL } from './mobile-config';
+import { getB3MobileApiBase } from './api-base';
 
 /**
  * Browser transport for the verified Android order availability client.
@@ -48,12 +48,9 @@ type OrderWindow = Window & {
   b3OrderAvailabilityNativeResponse?: (raw: string) => void;
 };
 const orderWindow = () => window as OrderWindow;
-const endpoint = (): string => {
-  const base = (import.meta.env.VITE_B3_MOBILE_CONFIG_URL as string | undefined)?.trim() || DEFAULT_MOBILE_CONFIG_URL;
-  const parsed = new URL(base);
-  if(parsed.protocol !== 'https:') throw Error('El Administrador debe utilizar HTTPS.');
-  return import.meta.env.DEV ? '/b3-mobile-api' : parsed.origin + '/api/v1/mobile';
-};
+const endpoint = (): string => import.meta.env.DEV
+  ? '/b3-mobile-api'
+  : getB3MobileApiBase();
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 function assertUuid(value: unknown): string {
   if(typeof value !== 'string' || !uuidPattern.test(value)) throw Error('Identificador de solicitud inválido.');
