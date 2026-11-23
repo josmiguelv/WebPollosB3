@@ -32,8 +32,9 @@ export type B3Store = {
   weeklyHours?: Record<string, { open: string; close: string }>;
   pickupEnabled?: boolean; deliveryEnabled?: boolean; dineInEnabled?: boolean;
   deliveryPricingMode?: string; deliveryRatePerKmPen?: number; deliveryFeePen?: number | null;
+  consultOrderAvailability?: boolean; paymentMethods?: Record<string,string[]>;
 };
-export type B3Catalog = { products: B3Product[]; categories: B3Category[]; stories: B3Story[]; stores: B3Store[]; comboDiscounts?: { plateDrink?: number; withDessert?: number } };
+export type B3Catalog = { products: B3Product[]; categories: B3Category[]; stories: B3Story[]; stores: B3Store[]; comboDiscounts?: { plateDrink?: number; withDessert?: number }; revision?: number };
 
 /** Fotografías externas SOLO para la demostración local. No representan platos reales de Pollos B3. */
 export const referenceMedia = {

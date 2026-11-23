@@ -19,7 +19,7 @@ export type InteractionEntry = {
 };
 export type DeliveryQuoteResponse = {
   storeId: string; storeName?: string; revision: number;
-  mode: 'delivery'; deliveryFeePen: number;
+  mode: 'delivery' | 'pickup'; deliveryFeePen: number;
   paymentMethods: string[]; distanceSource?: string;
 };
 export type PollResult = {
@@ -137,4 +137,20 @@ export function getWebOrderClient(): Promise<B3MobileOrderClient> {
     document.head.appendChild(script);
   }).catch(error=>{loading=null;throw error;});
   return loading;
+}
+
+/** Recojo se cotiza en el Administrador, sin inventar tarifas ni crear un FORM. */
+export async function quotePickup(input:{appId:string;storeId:string}): Promise<DeliveryQuoteResponse> {
+  assertUuid(input.storeId);
+  const response=await fetch(endpoint()+'/fulfillment/resolve',{
+    method:'POST',credentials:'omit',redirect:'error',cache:'no-store',
+    headers:{'Content-Type':'application/json',Accept:'application/json'},
+    body:JSON.stringify({appId:input.appId,mode:'pickup',storeId:input.storeId}),
+  });
+  if(!response.ok)throw Error('No fue posible validar el recojo (HTTP '+response.status+').');
+  const data=await response.json() as DeliveryQuoteResponse;
+  if(data.mode!=='pickup'||data.storeId!==input.storeId||
+     !Number.isSafeInteger(data.revision)||!Array.isArray(data.paymentMethods))
+    throw Error('La respuesta del Administrador no corresponde a esta sede.');
+  return data;
 }

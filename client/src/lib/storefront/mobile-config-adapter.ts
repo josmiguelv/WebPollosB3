@@ -106,6 +106,12 @@ export function normalizeMobileConfig(
       ...(typeof raw.pickup_enabled === 'boolean' ? { pickupEnabled: raw.pickup_enabled } : {}),
       ...(typeof raw.delivery_enabled === 'boolean' ? { deliveryEnabled: raw.delivery_enabled } : {}),
       ...(typeof raw.dine_in_enabled === 'boolean' ? { dineInEnabled: raw.dine_in_enabled } : {}),
+      ...(typeof raw.consultOrderAvailability === 'boolean' ? { consultOrderAvailability: raw.consultOrderAvailability } : {}),
+      ...(raw.paymentMethods && typeof raw.paymentMethods === 'object' && !Array.isArray(raw.paymentMethods)
+        ? { paymentMethods: Object.fromEntries(Object.entries(raw.paymentMethods as Record<string,unknown>)
+            .filter(([,v]) => Array.isArray(v))
+            .map(([k,v]) => [k,(v as unknown[]).filter(x => typeof x==='string') as string[]])) }
+        : {}),
       ...(pricing ? { deliveryPricingMode: pricing } : {}),
       ...(deliveryRate === undefined ? {} : { deliveryRatePerKmPen: deliveryRate }),
       ...(raw.deliveryFeePen === null || raw.delivery_fee_pen === null
@@ -156,5 +162,5 @@ export function mergeProductsAdditively(
 }
 /** Successful mobile response replaces ALL local stores; product merging never deletes. */
 export function applyMobileConfig(base: B3Catalog, update: B3MobileUpdate): B3Catalog {
-  return { ...mergeProductsAdditively(base, update.products, update.categories), stores: update.stores };
+  return { ...mergeProductsAdditively(base, update.products, update.categories), stores: update.stores, revision: update.revision };
 }

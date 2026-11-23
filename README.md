@@ -167,3 +167,7 @@ Se incorporó la lógica original del branch móvil `feat/b3-premium-animated-to
 `/b3-mobile-api` se proxifica hacia `/api/v1/mobile` del Administrador **solo con Vite en desarrollo**. Hosting estático definitivo requiere API HTTPS con CORS aprobado o proxy de mismo origen. No publicar este acceso mediante `allowedHosts:true` ni modificar TU VERSO.
 
 **Aún no se activa el envío real desde el checkout**: el piloto de Carta, su diseño, FORM y carrito actual siguen protegidos mientras se verifica el flujo completo de aceptación/rechazo. `VITE_B3_WEB_ORDER_ENABLED=false` por defecto. Los productos de prueba sin UUID publicado nunca podrán formar pedidos reales. 
+
+### Reglas de validación comercial importadas desde Android
+
+`web-order-flow.ts` valida productos UUID publicados y revisión del catálogo. Para Delivery consulta tarifa y sede al Administrador y, si la sede exige agente, crea una interacción idempotente y envía `FORM` exactamente con tres campos. El estado `ACCEPTED` técnico no aprueba la compra: solo los mensajes comerciales OUTBOUND del agente permiten avanzar. Recojo valida la sede sin crear interacción. El pago real sigue bloqueado. La lógica todavía se mantiene separada del JSX, con `VITE_B3_WEB_ORDER_ENABLED=false`.
